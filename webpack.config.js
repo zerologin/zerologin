@@ -46,6 +46,7 @@ Encore.setPublicPath('/assets')
 |
 */
 Encore.addEntry('app', './resources/js/app.js')
+Encore.addEntry('zerologin', './resources/js/zerologin.js')
 
 /*
 |--------------------------------------------------------------------------

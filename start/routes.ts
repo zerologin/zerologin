@@ -21,3 +21,6 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', 'HomeController.index')
+Route.get('sse/lnurl', 'AuthController.sseLnurl')
+Route.get('lnurl', 'AuthController.lnurlChallenge')
+Route.post('lnurl-login', 'AuthController.lnurlLogin')
