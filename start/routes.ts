@@ -24,7 +24,7 @@ import Env from '@ioc:Adonis/Core/Env'
 Route.get('/', 'HomeController.index')
     .middleware(async (ctx, next) => {
         console.log(ctx.request.host())
-        if (ctx.request.host() === Env.get('APP_URL').split('://')[1]) {
+        if (ctx.request.host() !== Env.get('APP_URL').split('://')[1]) {
             return ctx.response.status(301).redirect(`https://${ctx.request.host()!}`)
         }
         await next()
