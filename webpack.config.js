@@ -46,7 +46,6 @@ Encore.setPublicPath('/assets')
 |
 */
 Encore.addEntry('app', './resources/js/app.js')
-Encore.addEntry('zerologin', './resources/js/zerologin.js')
 
 /*
 |--------------------------------------------------------------------------
@@ -129,6 +128,7 @@ Encore.enableVersioning(Encore.isProduction())
 |
 */
 Encore.configureDevServerOptions((options) => {
+  options.port = 8081
   /**
    * Normalize "options.static" property to an array
    */
@@ -182,7 +182,7 @@ Encore.enableSassLoader()
 | sure to install the required dependencies.
 |
 */
-Encore.enableVueLoader(() => {}, {
+Encore.enableVueLoader(() => { }, {
   version: 3,
   runtimeCompilerBuild: false,
   useJsx: false
@@ -203,6 +203,47 @@ config.infrastructureLogging = {
   level: 'warn',
 }
 config.stats = 'errors-warnings'
+config.name = 'privateConfig';
+
+Encore.reset()
+/**
+ * SECOND CONFIG FOR PUBLIC JS zerologin.co
+ */
+
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev')
+}
+Encore.setOutputPath('./public/assets')
+Encore.setPublicPath('/assets')
+Encore.addEntry('zerologin', './resources/js/zerologin.js')
+Encore.disableSingleRuntimeChunk()
+Encore.cleanupOutputBeforeBuild()
+Encore.enableSourceMaps(!Encore.isProduction())
+Encore.enableVersioning(false)
+Encore.configureDevServerOptions((options) => {
+  options.port = 8082
+  /**
+   * Normalize "options.static" property to an array
+   */
+  if (!options.static) {
+    options.static = []
+  } else if (!Array.isArray(options.static)) {
+    options.static = [options.static]
+  }
+
+  options.liveReload = true
+  options.static.push({
+    directory: join(__dirname, './resources/views'),
+    watch: true,
+  })
+})
+Encore.enableSassLoader()
+const publicConfig = Encore.getWebpackConfig()
+publicConfig.infrastructureLogging = {
+  level: 'warn',
+}
+publicConfig.stats = 'errors-warnings'
+publicConfig.name = 'publicConfig';
 
 /*
 |--------------------------------------------------------------------------
@@ -212,4 +253,4 @@ config.stats = 'errors-warnings'
 | Export config for webpack to do its job
 |
 */
-module.exports = config
+module.exports = [config, publicConfig]
