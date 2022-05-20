@@ -28,9 +28,18 @@ export default class AuthController {
     if (!result) {
       return response.badRequest()
     }
-    
+
     LnurlService.removeHash(LnurlService.createHash(k1))
-    return response.redirect('/')
+
+    const tenDays = 1000 * 60 * 60 * 24 * 10
+    response.cookie('test', 'test', {
+      secure: true,
+      httpOnly: true,
+      domain: 'localhost',
+      expires: new Date(),
+      maxAge: tenDays
+    })
+    return response.send('ok')
   }
 
   static eventEmitter = new EventEmitter();
