@@ -46,6 +46,7 @@ Encore.setPublicPath('/assets')
 |
 */
 Encore.addEntry('app', './resources/js/app.js')
+Encore.addEntry('zerologin', './resources/js/zerologin.js')
 
 /*
 |--------------------------------------------------------------------------
@@ -253,4 +254,4 @@ publicConfig.name = 'publicConfig';
 | Export config for webpack to do its job
 |
 */
-module.exports = [config, publicConfig]
+module.exports = config
