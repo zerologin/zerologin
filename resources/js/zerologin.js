@@ -2,7 +2,7 @@ import QRCode from 'qrcode'
 import ky from 'ky'
 
 document.addEventListener('DOMContentLoaded', function () {
-    const source = new EventSource("https://login.swapmartket.org/sse/lnurl");
+    const source = new EventSource("https://login.swapmarket.org/sse/lnurl");
     // const source = new EventSource("https://zl-server.loca.lt/sse/lnurl");
     // const source = new EventSource("http://localhost:3333/sse/lnurl");
     const zeroLoginContainer = document.querySelector('#zero-login')
