@@ -22,24 +22,25 @@ export default class AuthController {
     }
   }
 
-  public async lnurlLogin({ request, response }: HttpContextContract) {
-    const { sig, k1, key } = request.body()
-    const result = LnurlService.verifySig(sig, k1, key)
-    if (!result) {
-      return response.badRequest()
-    }
+  // public async lnurlLogin({ request, response }: HttpContextContract) {
+  //   const { sig, k1, key } = request.body()
+  //   const result = LnurlService.verifySig(sig, k1, key)
+  //   if (!result) {
+  //     return response.badRequest()
+  //   }
 
-    LnurlService.removeHash(LnurlService.createHash(k1))
+  //   LnurlService.removeHash(LnurlService.createHash(k1))
 
-    const tenDays = 1000 * 60 * 60 * 24 * 10
-    response.plainCookie('test', 'test', {
-      secure: true,
-      httpOnly: true,
-      domain: 'swapmarket.org',
-      maxAge: tenDays
-    })
-    return response.send('ok')
-  }
+  //   const tenDays = 1000 * 60 * 60 * 24 * 10
+  //   response.plainCookie('test', 'test', {
+  //     secure: false,
+  //     httpOnly: false,
+  //     domain: 'loca.lt',
+  //     maxAge: tenDays
+  //   })
+    
+  //   return response.send('ok')
+  // }
 
   static eventEmitter = new EventEmitter();
 
