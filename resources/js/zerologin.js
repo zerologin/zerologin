@@ -3,8 +3,8 @@ import ky from 'ky'
 
 document.addEventListener('DOMContentLoaded', function () {
     // const source = new EventSource("https://login.swapmarket.org/sse/lnurl");
-    const source = new EventSource("https://zl-server.loca.lt/sse/lnurl");
-    // const source = new EventSource("http://localhost:3333/sse/lnurl");
+    // const source = new EventSource("https://zl-server.loca.lt/sse/lnurl");
+    const source = new EventSource("http://localhost:3333/sse/lnurl");
     const zeroLoginContainer = document.querySelector('#zero-login')
     const canvas = document.createElement('canvas')
     zeroLoginContainer.appendChild(canvas)
@@ -25,13 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (parsed.message === "loggedin") {
                 console.log("in loggedin", { ...parsed });
-                // ky.post("http://localhost:3333/lnurl-login", { json: { ...parsed } }).then(r => {
-                //     console.log(r)
-                // });
-                window.location = 'https://zl-server.loca.lt/callback'
-                // ky.post("https://login.swapmarket.org/lnurl-login", { json: { ...parsed } }).then(r => {
-                //     console.log(r)
-                // });
+                // window.location = 'https://zl-server.loca.lt/callback'
+                window.location = parsed.callback
             }
         },
         false

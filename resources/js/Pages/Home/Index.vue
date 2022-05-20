@@ -1,3 +1,9 @@
 <template>
-    <div>Hello from vue</div>
+  <div>
+    <h1>zerologin</h1>
+    <div id="zero-login"></div>
+  </div>
 </template>
+
+<script setup lang="ts">
+</script>

@@ -24,15 +24,4 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.get('/', 'HomeController.index')
 Route.get('sse/lnurl', 'AuthController.sseLnurl')
 Route.get('lnurl', 'AuthController.lnurlChallenge')
-// Route.post('lnurl-login', 'AuthController.lnurlLogin')
-Route.get('callback', async ({ request, response }) => {
-    console.log(request.cookiesList())
-    const tenDays = 1000 * 60 * 60 * 24 * 10
-    response.plainCookie('hello', JSON.stringify({ hello: 'hi' }), {
-        secure: true,
-        httpOnly: true,
-        domain: '.loca.lt',
-        maxAge: tenDays
-    })
-    response.redirect('https://zl-client.loca.lt')
-})
+Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
