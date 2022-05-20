@@ -2,7 +2,7 @@ import QRCode from 'qrcode'
 import ky from 'ky'
 
 document.addEventListener('DOMContentLoaded', function () {
-    const source = new EventSource("https://zerologin.co/sse/lnurl");
+    const source = new EventSource("https://login.swapmartket.org/sse/lnurl");
     // const source = new EventSource("https://zl-server.loca.lt/sse/lnurl");
     // const source = new EventSource("http://localhost:3333/sse/lnurl");
     const zeroLoginContainer = document.querySelector('#zero-login')
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // ky.post("https://zl-server.loca.lt/lnurl-login", { json: { ...parsed } }).then(r => {
                 //     console.log(r)
                 // });
-                ky.post("https://zerologin.co/lnurl-login", { json: { ...parsed } }).then(r => {
+                ky.post("https://login.swapmarket.org/lnurl-login", { json: { ...parsed } }).then(r => {
                     console.log(r)
                 });
             }
