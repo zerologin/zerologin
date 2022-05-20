@@ -32,11 +32,10 @@ export default class AuthController {
     LnurlService.removeHash(LnurlService.createHash(k1))
 
     const tenDays = 1000 * 60 * 60 * 24 * 10
-    response.cookie('test', 'test', {
+    response.plainCookie('test', 'test', {
       secure: true,
       httpOnly: true,
-      domain: 'localhost',
-      expires: new Date(),
+      domain: 'swapmarket.org',
       maxAge: tenDays
     })
     return response.send('ok')
