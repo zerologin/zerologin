@@ -1,7 +1,6 @@
 import QRCode from 'qrcode'
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log(APP_URL)
     const source = new EventSource(APP_URL + "/sse/lnurl");
     const zeroLoginContainer = document.querySelector('#zero-login')
     const canvas = document.createElement('canvas')
