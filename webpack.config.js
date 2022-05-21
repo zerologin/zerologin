@@ -9,6 +9,10 @@ const Encore = require('@symfony/webpack-encore')
 if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev')
 }
+Encore.configureDefinePlugin((options) => {
+  options.APP_URL = JSON.stringify(process.env.APP_URL || 'http://localhost:3333')
+})
+
 
 /*
 |--------------------------------------------------------------------------

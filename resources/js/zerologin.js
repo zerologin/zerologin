@@ -1,10 +1,8 @@
 import QRCode from 'qrcode'
-import ky from 'ky'
 
 document.addEventListener('DOMContentLoaded', function () {
-    // const source = new EventSource("https://login.swapmarket.org/sse/lnurl");
-    // const source = new EventSource("https://zl-server.loca.lt/sse/lnurl");
-    const source = new EventSource("http://localhost:3333/sse/lnurl");
+    console.log(APP_URL)
+    const source = new EventSource(APP_URL + "/sse/lnurl");
     const zeroLoginContainer = document.querySelector('#zero-login')
     const canvas = document.createElement('canvas')
     zeroLoginContainer.appendChild(canvas)
@@ -25,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (parsed.message === "loggedin") {
                 console.log("in loggedin", { ...parsed });
-                // window.location = 'https://zl-server.loca.lt/callback'
                 window.location = parsed.callback
             }
         },
