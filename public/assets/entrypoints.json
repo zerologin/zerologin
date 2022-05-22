@@ -1,11 +1,17 @@
 {
   "entrypoints": {
     "app": {
-      "css": ["http://localhost:8081/assets/app.css"],
-      "js": ["http://localhost:8081/assets/app.js"]
+      "css": [
+        "/assets/app.31d6cfe0.css"
+      ],
+      "js": [
+        "/assets/app.df200ee0.js"
+      ]
     },
     "zerologin": {
-      "js": ["http://localhost:8081/assets/zerologin.js"]
+      "js": [
+        "/assets/zerologin.41d64342.js"
+      ]
     }
   }
 }

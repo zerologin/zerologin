@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "node ace serve --watch --encore-args=\"--port 8081\"",
     "build": "node ace build --production",
-    "postbuild": "cp build/public/assets/zerologin.*.js build/public/zerologin.js",
+    "postbuild": "npm run asset && npm run env && npm run migrate",
+    "asset": "cp build/public/assets/zerologin.*.js build/public/zerologin.js",
+    "env": "cp .env build/",
+    "migrate": "node ace migration:run --force",
     "start": "node server.js",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
