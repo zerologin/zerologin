@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node ace serve --watch --encore-args=\"--port 8081\"",
     "build": "node ace build --production",
+    "postbuild": "cp build/public/assets/zerologin.*.js build/public/zerologin.js",
     "start": "node server.js",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
@@ -43,6 +44,7 @@
     "@symfony/webpack-encore": "^2.1.0",
     "@vue/compiler-sfc": "^3.2.33",
     "adonis-preset-ts": "^2.1.0",
+    "dotenv": "^16.0.1",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-adonis": "^2.1.0",

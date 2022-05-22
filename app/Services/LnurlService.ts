@@ -1,6 +1,5 @@
 import lnurl from 'lnurl'
 import crypto from 'crypto'
-import Env from '@ioc:Adonis/Core/Env'
 
 class LnurlAuth {
     private _usedHashes: string[] = []
@@ -36,10 +35,10 @@ class LnurlAuth {
         this._usedHashes = this._usedHashes.filter(h => h !== hash)
     }
 
-    public generateNewUrl() {
+    public generateNewUrl(hostname: string) {
         const secret = this.generateSecret()
         this.addHash(this.createHash(secret))
-        const url = `${Env.get('APP_URL')}/lnurl?tag=login&k1=${secret}`
+        const url = `${hostname}/lnurl?tag=login&k1=${secret}`
         return {
             url,
             encoded: lnurl.encode(url).toUpperCase(),

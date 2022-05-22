@@ -71,7 +71,8 @@ export default class AuthController {
 
   static eventEmitter = new EventEmitter();
 
-  public async sseLnurl({ response, request }: HttpContextContract) {
+  public async sseLnurl(ctx: HttpContextContract) {
+    const { response, request } = ctx
     const headers = {
       'Content-Type': 'text/event-stream',
       'Connection': 'keep-alive',
@@ -80,7 +81,7 @@ export default class AuthController {
     }
     response.response.writeHead(200, headers)
 
-    const lnurlChallenge = LnurlService.generateNewUrl()
+    const lnurlChallenge = LnurlService.generateNewUrl(Utils.getHost(ctx))
 
     response.response.write(`data: ${JSON.stringify({ message: 'challenge', ...lnurlChallenge })}\n\n`)
 

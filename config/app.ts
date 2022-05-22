@@ -111,6 +111,13 @@ export const http: ServerConfig = {
     secure: false,
     sameSite: false,
   },
+
+  /*
+  |--------------------------------------------------------------------------
+  | ASL AsyncLocalStorage 
+  |--------------------------------------------------------------------------
+  */
+  useAsyncLocalStorage: false,
 }
 
 /*

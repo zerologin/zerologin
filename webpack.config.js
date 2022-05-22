@@ -1,17 +1,21 @@
 const { join } = require('path')
 const Encore = require('@symfony/webpack-encore')
+const dotenv = require('dotenv')
 
 /*
 |--------------------------------------------------------------------------
 | Encore runtime environment
 |--------------------------------------------------------------------------
 */
+
+Encore.configureDefinePlugin((options) => {
+  options.APP_URL = JSON.stringify(dotenv.config().parsed.APP_URL || 'http://localhost:3333')
+})
+
 if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev')
 }
-Encore.configureDefinePlugin((options) => {
-  options.APP_URL = JSON.stringify(process.env.APP_URL || 'http://localhost:3333')
-})
+
 
 
 /*
