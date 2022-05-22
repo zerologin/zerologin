@@ -11,12 +11,12 @@ export default class AuthController {
   public async lnurlChallenge({ request, response }: HttpContextContract) {
     try {
       const { tag, k1, sig, key } = request.qs()
-      if (tag != 'login') {
-        return response.send({ "status": "ERROR", "reason": "Not a login request" })
+      if (tag !== 'login') {
+        return response.send({ status: 'ERROR', reason: 'Not a login request' })
       }
       const result = LnurlService.verifySig(sig, k1, key)
       if (!result) {
-        return response.send({ "status": "ERROR", "reason": "Bad signature" })
+        return response.send({ status: 'ERROR', reason: 'Bad signature' })
       }
 
       const appUrl = Env.get('APP_URL')
@@ -27,19 +27,28 @@ export default class AuthController {
         }
       }
 
-      const callbackRoute = Route.makeSignedUrl('callback', {
-        key,
-        k1
-      },
+      const callbackRoute = Route.makeSignedUrl(
+        'callback',
+        {
+          key,
+          k1,
+        },
         {
           expiresIn: '1m',
-        })
+        }
+      )
 
-      AuthController.eventEmitter.emit('loggedin', { message: 'loggedin', key, k1, sig, callback: appUrl + callbackRoute })
+      AuthController.eventEmitter.emit('loggedin', {
+        message: 'loggedin',
+        key,
+        k1,
+        sig,
+        callback: appUrl + callbackRoute,
+      })
 
-      return response.send({ "status": "OK" })
+      return response.send({ status: 'OK' })
     } catch (error) {
-      return response.send({ "status": "ERROR", "reason": error.message })
+      return response.send({ status: 'ERROR', reason: error.message })
     }
   }
 
@@ -50,7 +59,7 @@ export default class AuthController {
 
     const { k1, key } = request.params()
 
-    const jwt = await new jose.SignJWT({ 'pubKey': key })
+    const jwt = await new jose.SignJWT({ pubKey: key })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('2h')
@@ -63,13 +72,14 @@ export default class AuthController {
       secure: true,
       httpOnly: true,
       domain,
-      maxAge: tenDays
+      maxAge: tenDays,
     })
     response.redirect(request.protocol() + '://' + request.host()!)
     LnurlService.removeHash(LnurlService.createHash(k1))
   }
 
-  static eventEmitter = new EventEmitter();
+  //TODO: There is some memory leaks on this
+  private static eventEmitter = new EventEmitter()
 
   public async sseLnurl(ctx: HttpContextContract) {
     const { response, request } = ctx
@@ -77,23 +87,28 @@ export default class AuthController {
       'Content-Type': 'text/event-stream',
       'Connection': 'keep-alive',
       'Cache-Control': 'no-cache',
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
     }
     response.response.writeHead(200, headers)
 
     const lnurlChallenge = LnurlService.generateNewUrl(Utils.getHost(ctx))
 
-    response.response.write(`data: ${JSON.stringify({ message: 'challenge', ...lnurlChallenge })}\n\n`)
+    response.response.write(
+      `data: ${JSON.stringify({ message: 'challenge', ...lnurlChallenge })}\n\n`
+    )
 
     const secret = lnurlChallenge.secret
     request.request.on('close', () => {
       LnurlService.removeHash(LnurlService.createHash(secret))
-    });
-
-    AuthController.eventEmitter.on('loggedin', (obj: { message: string, k1: string, sig: string, key: string }) => {
-      if (obj.k1 === secret) {
-        response.response.write(`data: ${JSON.stringify(obj)}\n\n`)
-      }
     })
+
+    AuthController.eventEmitter.on(
+      'loggedin',
+      (obj: { message: string; k1: string; sig: string; key: string }) => {
+        if (obj.k1 === secret) {
+          response.response.write(`data: ${JSON.stringify(obj)}\n\n`)
+        }
+      }
+    )
   }
 }

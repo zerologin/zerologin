@@ -27,5 +27,7 @@ Route.get('lnurl', 'AuthController.lnurlChallenge')
 Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
 
 Route.group(() => {
-    Route.get('/', 'AccountsController.index')
-}).prefix('accounts').middleware('jwt')
+  Route.get('/', 'AccountsController.index')
+})
+  .prefix('accounts')
+  .middleware('jwt')

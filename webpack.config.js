@@ -16,8 +16,6 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev')
 }
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Output path
@@ -191,10 +189,10 @@ Encore.enableSassLoader()
 | sure to install the required dependencies.
 |
 */
-Encore.enableVueLoader(() => { }, {
+Encore.enableVueLoader(() => {}, {
   version: 3,
   runtimeCompilerBuild: false,
-  useJsx: false
+  useJsx: false,
 })
 
 /*
@@ -212,7 +210,7 @@ config.infrastructureLogging = {
   level: 'warn',
 }
 config.stats = 'errors-warnings'
-config.name = 'privateConfig';
+config.name = 'privateConfig'
 
 // Encore.reset()
 // /**
