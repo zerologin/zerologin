@@ -32,7 +32,6 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
 const { auth } = defineProps({ auth: Object })
-console.log(auth)
 </script>
 
 <style lang="scss" scoped>

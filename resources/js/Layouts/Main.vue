@@ -4,7 +4,9 @@
       <Header :auth="auth" />
     </el-header>
     <el-main>
-      <slot />
+      <div class="main-container">
+        <slot />
+      </div>
     </el-main>
     <el-footer>zerologin</el-footer>
   </el-container>

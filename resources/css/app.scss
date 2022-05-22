@@ -6,3 +6,19 @@ body {
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
 }
+
+.main-container {
+    margin: auto;
+    width: 720px
+}
+
+@media screen and (max-width: 750px) {
+    .main-container {
+        width: 100%;
+    }
+}
+
+.el-form-item__label {
+    margin-bottom: 0 !important;
+    height: 27px !important;
+}

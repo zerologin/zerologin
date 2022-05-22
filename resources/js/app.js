@@ -4,6 +4,9 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
 import ElementPlus from 'element-plus'
 import Layout from './Layouts/Main'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 createInertiaApp({
   resolve: name => {
@@ -15,8 +18,11 @@ createInertiaApp({
   },
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })
-      app.use(plugin)
-      app.use(ElementPlus)
-      app.mount(el)
+    app.use(plugin)
+    app.use(ElementPlus)
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component)
+    }
+    app.mount(el)
   },
 })

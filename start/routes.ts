@@ -32,3 +32,9 @@ Route.group(() => {
 })
   .prefix('account')
   .middleware('auth')
+
+Route.group(() => {
+  Route.post('/', 'DomainsController.store')
+  Route.delete('/:id', 'DomainsController.delete')
+}).prefix('domains')
+  .middleware('auth')
