@@ -4,6 +4,6 @@ import DomainService from 'App/Services/DomainService'
 export default class AccountsController {
   public async index({ request, inertia }: HttpContextContract) {
     const domains = await DomainService.getAll(request.user)
-    return inertia.render('Accounts/Index', { domains })
+    return inertia.render('Account/Index', { domains })
   }
 }

@@ -19,9 +19,10 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
-// import Env from '@ioc:Adonis/Core/Env'
 
 Route.get('/', 'HomeController.index')
+Route.inertia('login', 'Auth/Login')
+
 Route.get('sse/lnurl', 'AuthController.sseLnurl')
 Route.get('lnurl', 'AuthController.lnurlChallenge')
 Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
@@ -29,5 +30,5 @@ Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
 Route.group(() => {
   Route.get('/', 'AccountsController.index')
 })
-  .prefix('accounts')
-  .middleware('jwt')
+  .prefix('account')
+  .middleware('auth')

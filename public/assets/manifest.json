@@ -1,5 +1,5 @@
 {
-  "assets/app.css": "/assets/app.31d6cfe0.css",
-  "assets/app.js": "/assets/app.df200ee0.js",
-  "assets/zerologin.js": "/assets/zerologin.41d64342.js"
+  "assets/app.css": "http://localhost:8081/assets/app.css",
+  "assets/app.js": "http://localhost:8081/assets/app.js",
+  "assets/zerologin.js": "http://localhost:8081/assets/zerologin.js"
 }
