@@ -65,14 +65,15 @@ export default class AuthController {
 
     const { k1, key } = ctx.request.params()
 
-    const domain = Utils.getHost(ctx, false)
-
+    let hostDomain = Utils.getHost(ctx, true)
     let jwtSecret = Env.get('JWT_SECRET')
-    if (Utils.isExternal(domain)) {
+
+    if (Utils.isExternal(hostDomain)) {
       const externalUrl = Utils.getHost(ctx, false)
       // Check the domain exists and is configured
-      const domain = await Domain.query().where('url', externalUrl).firstOrFail()
+      const domain = await Domain.query().where('zerologin_url', externalUrl).firstOrFail()
       jwtSecret = domain.jwtSecret
+      hostDomain = 'https://' + domain.rootUrl
     }
 
     const jwt = await new jose.SignJWT({ pubKey: key })
@@ -86,10 +87,10 @@ export default class AuthController {
     ctx.response.plainCookie('jwt', jwt, {
       secure: true,
       httpOnly: true,
-      domain: domain.split(':')[0], // Split is for localhost:3333 only
+      domain: Utils.removeProtocol(hostDomain).split(':')[0], // Split is for localhost:3333 only
       maxAge: tenDays,
     })
-    ctx.response.redirect(Utils.getHost(ctx, true))
+    ctx.response.redirect(hostDomain)
     LnurlService.removeHash(LnurlService.createHash(k1))
   }
 
@@ -112,8 +113,8 @@ export default class AuthController {
 
     let domain = rootDomain
     if (Utils.isExternal(hostWithoutProtocol)) {
-      const externalDomain = await Domain.query().where('url', rootDomain).firstOrFail()
-      domain = externalDomain.url
+      const externalDomain = await Domain.query().where('zerologin_url', rootDomain).firstOrFail()
+      domain = externalDomain.zerologinUrl
     }
 
     const lnurlChallenge = LnurlService.generateNewUrl(hostWithProtocol)

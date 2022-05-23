@@ -13,7 +13,10 @@ export default class Domain extends BaseModel {
   public updatedAt: DateTime
 
   @column()
-  public url: string
+  public rootUrl: string
+
+  @column()
+  public zerologinUrl: string
 
   @column()
   public userId: string

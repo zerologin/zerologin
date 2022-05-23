@@ -8,8 +8,11 @@
       :size="formSize"
       label-position="top"
     >
-      <el-form-item label="Subdomain: login.yourdomain.com" prop="domain">
-        <el-input v-model="ruleForm.domain" />
+      <el-form-item label="Root URL: yourdomain.com" prop="rootUrl">
+        <el-input v-model="ruleForm.rootUrl" />
+      </el-form-item>
+      <el-form-item label="Zerologin URL: login.yourdomain.com" prop="zerologinUrl">
+        <el-input v-model="ruleForm.zerologinUrl" />
       </el-form-item>
       <el-form-item label="Secret: will be used for JWT encryption" prop="secret">
         <el-input type="password" v-model="ruleForm.secret" show-password />
@@ -21,7 +24,8 @@
 
     <h1>Your domains</h1>
     <el-table :data="domains" stripe>
-      <el-table-column prop="url" label="Domain" />
+      <el-table-column prop="root_url" label="Root" />
+      <el-table-column prop="zerologin_url" label="Zerologin" />
       <el-table-column prop="created_at" label="Created at">
         <template #default="scope">
           {{ DateTime.fromISO(scope.row.created_at).toLocaleString(DateTime.DATE_SHORT) }}
@@ -32,7 +36,7 @@
           <el-button
             size="small"
             type="danger"
-            @click="handleDeleteDomain(scope.row.id, scope.row.url)"
+            @click="handleDeleteDomain(scope.row.id, scope.row.rootUrl)"
           >
             Delete
           </el-button>
@@ -53,12 +57,14 @@ const { domains } = defineProps({ domains: Array })
 const formSize = ref('default')
 const ruleFormRef = ref()
 const ruleForm = reactive({
-  domain: '',
+  rootUrl: '',
+  zerologinUrl: '',
   secret: '',
 })
 
 const rules = reactive({
-  domain: [{ required: true, message: 'Subdomain is required', trigger: 'blur' }],
+  rootUrl: [{ required: true, message: 'Root URL is required', trigger: 'blur' }],
+  zerologinUrl: [{ required: true, message: 'Zerologin URL is required', trigger: 'blur' }],
   secret: [{ required: true, message: 'Secret is required', trigger: 'blur' }],
 })
 

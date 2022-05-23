@@ -4,19 +4,20 @@ import Utils from 'App/Utils'
 
 export default class DomainsController {
   public async store({ request, response }: HttpContextContract) {
+    const urlSchema = schema.string({ trim: true }, [
+      rules.url({
+        protocols: ['http', 'https'],
+        requireTld: true,
+        requireProtocol: false,
+        requireHost: true,
+        bannedHosts: ['zerologin.co'],
+      })])
     const validationSchema = schema.create({
-      domain: schema.string({ trim: true }, [
-        rules.url({
-          protocols: ['http', 'https'],
-          requireTld: true,
-          requireProtocol: false,
-          requireHost: true,
-          bannedHosts: ['zerologin.co'],
-        }),
-      ]),
+      zerologinUrl: urlSchema,
+      rootUrl: urlSchema,
       secret: schema.string({ trim: true }),
     })
-    const { domain, secret } = await request.validate({
+    const { zerologinUrl, rootUrl, secret } = await request.validate({
       schema: validationSchema,
       messages: {
         'required': 'The {{ field }} is required',
@@ -24,9 +25,10 @@ export default class DomainsController {
       },
     })
 
-    let parsedDomain = Utils.getRootDomain(domain)
+    let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
+    let parsedRootUrl = Utils.getRootDomain(rootUrl)
 
-    await request.user.related('domains').create({ url: parsedDomain, jwtSecret: secret })
+    await request.user.related('domains').create({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: secret })
     response.redirect().back()
   }
 
