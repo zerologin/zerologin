@@ -24,7 +24,7 @@ export default class AuthController {
       if (Utils.isExternal(Utils.getHost(ctx, false))) {
         const externalUrl = Utils.getHost(ctx, true)
         // Check the domain exists and is configured
-        await Domain.query().where('url', Utils.removeProtocol(externalUrl)).firstOrFail()
+        await Domain.query().where('zerologin_url', Utils.removeProtocol(externalUrl)).firstOrFail()
         appUrl = externalUrl
       } else {
         let user = await User.query().where('pub_key', key).first()
