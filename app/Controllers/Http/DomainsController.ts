@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import Utils from 'App/Utils'
 
 export default class DomainsController {
 
@@ -24,15 +25,9 @@ export default class DomainsController {
             }
         })
 
-        let parsedDomain = domain
-        if (parsedDomain.includes('://')) {
-            parsedDomain = parsedDomain.split('://')[1]
-        }
-        if (parsedDomain.includes('/')) {
-            parsedDomain = parsedDomain.split('/')[0]
-        }
+        let parsedDomain = Utils.getRootDomain(domain)
 
-        await request.user.related('domains').create({ name: parsedDomain, jwtSecret: secret })
+        await request.user.related('domains').create({ url: parsedDomain, jwtSecret: secret })
         response.redirect().back()
     }
 

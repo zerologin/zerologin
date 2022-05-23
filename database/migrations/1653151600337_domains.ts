@@ -7,7 +7,7 @@ export default class Domains extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary().defaultTo(this.db.rawQuery('gen_random_uuid()').knexQuery)
       table.uuid('user_id').notNullable().references('id').inTable('users')
-      table.string('name').notNullable()
+      table.string('url').notNullable()
       table.string('jwt_secret').notNullable()
 
       /**

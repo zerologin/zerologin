@@ -8,7 +8,7 @@
       :size="formSize"
       label-position="top"
     >
-      <el-form-item label="Root domain: yourdomain.com" prop="domain">
+      <el-form-item label="Subdomain: login.yourdomain.com" prop="domain">
         <el-input v-model="ruleForm.domain" />
       </el-form-item>
       <el-form-item label="Secret: will be used for JWT encryption" prop="secret">
@@ -21,7 +21,7 @@
 
     <h1>Your domains</h1>
     <el-table :data="domains" stripe>
-      <el-table-column prop="name" label="Domain" />
+      <el-table-column prop="url" label="Domain" />
       <el-table-column prop="created_at" label="Created at">
         <template #default="scope">
           {{ DateTime.fromISO(scope.row.created_at).toLocaleString(DateTime.DATE_SHORT) }}
@@ -32,7 +32,7 @@
           <el-button
             size="small"
             type="danger"
-            @click="handleDeleteDomain(scope.row.id, scope.row.name)"
+            @click="handleDeleteDomain(scope.row.id, scope.row.url)"
           >
             Delete
           </el-button>
@@ -58,7 +58,7 @@ const ruleForm = reactive({
 })
 
 const rules = reactive({
-  domain: [{ required: true, message: 'Root domain name is required', trigger: 'blur' }],
+  domain: [{ required: true, message: 'Subdomain is required', trigger: 'blur' }],
   secret: [{ required: true, message: 'Secret is required', trigger: 'blur' }],
 })
 

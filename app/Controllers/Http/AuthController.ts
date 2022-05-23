@@ -6,21 +6,27 @@ import User from 'App/Models/User'
 import Route from '@ioc:Adonis/Core/Route'
 import * as jose from 'jose'
 import Utils from 'App/Utils'
+import Domain from 'App/Models/Domain'
 
 export default class AuthController {
-  public async lnurlChallenge({ request, response }: HttpContextContract) {
+  public async lnurlChallenge(ctx: HttpContextContract) {
     try {
-      const { tag, k1, sig, key } = request.qs()
+      const { tag, k1, sig, key } = ctx.request.qs()
       if (tag !== 'login') {
-        return response.send({ status: 'ERROR', reason: 'Not a login request' })
+        return ctx.response.send({ status: 'ERROR', reason: 'Not a login request' })
       }
       const result = LnurlService.verifySig(sig, k1, key)
       if (!result) {
-        return response.send({ status: 'ERROR', reason: 'Bad signature' })
+        return ctx.response.send({ status: 'ERROR', reason: 'Bad signature' })
       }
 
-      const appUrl = Env.get('APP_URL')
-      if (!Utils.isExternal(request.host()!)) {
+      let appUrl = Env.get('APP_URL')
+      if (Utils.isExternal(Utils.getHost(ctx, false))) {
+        const externalUrl = Utils.getHost(ctx, true)
+        // Check the domain exists and is configured
+        await Domain.query().where('url', Utils.removeProtocol(externalUrl)).firstOrFail()
+        appUrl = externalUrl
+      } else {
         let user = await User.query().where('pub_key', key).first()
         if (user === null) {
           await User.create({ pubKey: key })
@@ -46,35 +52,44 @@ export default class AuthController {
         callback: appUrl + callbackRoute,
       })
 
-      return response.send({ status: 'OK' })
+      return ctx.response.send({ status: 'OK' })
     } catch (error) {
-      return response.send({ status: 'ERROR', reason: error.message })
+      return ctx.response.send({ status: 'ERROR', reason: error.message })
     }
   }
 
-  public async callback({ request, response }: HttpContextContract) {
-    if (!request.hasValidSignature()) {
+  public async callback(ctx: HttpContextContract) {
+    if (!ctx.request.hasValidSignature()) {
       return 'Login failed'
     }
 
-    const { k1, key } = request.params()
+    const { k1, key } = ctx.request.params()
+
+    const domain = Utils.getHost(ctx, false)
+
+    let jwtSecret = Env.get('JWT_SECRET')
+    if (Utils.isExternal(domain)) {
+      const externalUrl = Utils.getHost(ctx, false)
+      // Check the domain exists and is configured
+      const domain = await Domain.query().where('url', externalUrl).firstOrFail()
+      jwtSecret = domain.jwtSecret
+    }
 
     const jwt = await new jose.SignJWT({ pubKey: key })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('2h')
       //TODO: Set audience, issuer
-      .sign(Buffer.from(Env.get('JWT_SECRET'), 'utf-8'))
+      .sign(Buffer.from(jwtSecret, 'utf-8'))
 
     const tenDays = 1000 * 60 * 60 * 24 * 10
-    const domain = request.host()!.split(':')[0]
-    response.plainCookie('jwt', jwt, {
+    ctx.response.plainCookie('jwt', jwt, {
       secure: true,
       httpOnly: true,
-      domain,
+      domain: domain.split(':')[0], // Split is for localhost:3333 only
       maxAge: tenDays,
     })
-    response.redirect(request.protocol() + '://' + request.host()!)
+    ctx.response.redirect(Utils.getHost(ctx, true))
     LnurlService.removeHash(LnurlService.createHash(k1))
   }
 
@@ -91,10 +106,20 @@ export default class AuthController {
     }
     response.response.writeHead(200, headers)
 
-    const lnurlChallenge = LnurlService.generateNewUrl(Utils.getHost(ctx))
+    const hostWithProtocol = Utils.getHost(ctx, true)
+    const hostWithoutProtocol = Utils.getHost(ctx, false)
+    const rootDomain = Utils.getRootDomain(hostWithProtocol)
+
+    let domain = rootDomain
+    if (Utils.isExternal(hostWithoutProtocol)) {
+      const externalDomain = await Domain.query().where('url', rootDomain).firstOrFail()
+      domain = externalDomain.url
+    }
+
+    const lnurlChallenge = LnurlService.generateNewUrl(hostWithProtocol)
 
     response.response.write(
-      `data: ${JSON.stringify({ message: 'challenge', ...lnurlChallenge })}\n\n`
+      `data: ${JSON.stringify({ message: 'challenge', domain, ...lnurlChallenge })}\n\n`
     )
 
     const secret = lnurlChallenge.secret
