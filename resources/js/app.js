@@ -5,11 +5,11 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3'
 import ElementPlus from 'element-plus'
 import Layout from './Layouts/Main'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
 createInertiaApp({
-  resolve: name => {
+  resolve: (name) => {
     const page = require(`./Pages/${name}`).default
     if (page.layout === undefined && !name.startsWith('Public/')) {
       page.layout = Layout

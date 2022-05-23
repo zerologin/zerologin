@@ -1,8 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import * as jose from 'jose'
-import Env from '@ioc:Adonis/Core/Env'
 import UserService from 'App/Services/UserService'
-import JwtPayload from 'Contracts/jwtPayload'
 import JwtService from 'App/Services/JwtService'
 
 export default class Jwt {
