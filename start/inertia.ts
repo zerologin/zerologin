@@ -9,6 +9,7 @@
 */
 
 import Inertia from '@ioc:EidelLev/Inertia'
+import Env from '@ioc:Adonis/Core/Env'
 
 Inertia.share({
   errors: (ctx) => {
@@ -17,4 +18,5 @@ Inertia.share({
   auth: (ctx) => {
     return { isLoggedIn: !!ctx.request.user, username: ctx.request.user?.pubKey }
   },
+  appUrl: () => Env.get('APP_URL')
 }).version(() => Inertia.manifestFile('public/assets/manifest.json'))

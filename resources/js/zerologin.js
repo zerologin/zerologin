@@ -5,7 +5,10 @@ document.addEventListener(
   function () {
     const zeroLoginContainer = document.querySelector('#zero-login')
     if (!zeroLoginContainer) return
-    const source = new EventSource(APP_URL + '/sse/lnurl')
+    let url = zeroLoginContainer.getAttribute('data-url')
+    if (!url) return
+    if(!url.includes('://')) url = 'https://' + url
+    const source = new EventSource(url + '/sse/lnurl')
     const canvas = document.createElement('canvas')
     zeroLoginContainer.appendChild(canvas)
     const lnurlSpan = document.createElement('span')
