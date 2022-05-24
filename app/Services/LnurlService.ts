@@ -1,6 +1,6 @@
 import lnurl from 'lnurl'
 import crypto from 'crypto'
-
+// TODO Use @zerologin/lnurl instead of lnurl
 class LnurlAuth {
   private _usedHashes: string[] = []
 
@@ -62,7 +62,6 @@ class LnurlAuth {
       )
     }
     if (typeof data === 'string') {
-      // && isHex(data)
       data = Buffer.from(data, 'hex')
     }
     return crypto.createHash('sha256').update(data).digest('hex')
