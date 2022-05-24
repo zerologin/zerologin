@@ -13,7 +13,7 @@ export default class SilentAuthMiddleware {
       const payload = await JwtService.verify(jwtCookie)
       ctx.request.user = await UserService.getOrCreate(payload.pubKey)
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
 
     await next()

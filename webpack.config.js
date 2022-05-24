@@ -189,11 +189,18 @@ Encore.enableSassLoader()
 | sure to install the required dependencies.
 |
 */
-Encore.enableVueLoader(() => {}, {
-  version: 3,
-  runtimeCompilerBuild: false,
-  useJsx: false,
-})
+Encore.enableVueLoader((options) => {
+  options.compilerOptions = {
+    isCustomElement: (tag) => {
+      return tag === 'zero-login'
+    }
+  }
+},
+  {
+    version: 3,
+    runtimeCompilerBuild: true,
+    useJsx: false,
+  })
 
 /*
 |--------------------------------------------------------------------------

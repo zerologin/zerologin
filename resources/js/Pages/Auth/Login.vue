@@ -1,5 +1,7 @@
 <template>
-  <div id="zero-login" :data-url="appUrl"></div>
+  <div>
+    <zero-login :zlurl="appUrl"></zero-login>
+  </div>
 </template>
 
 <script setup>

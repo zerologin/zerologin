@@ -1,28 +1,46 @@
 import QRCode from 'qrcode'
+import { defineCustomElement } from 'vue'
 
-document.addEventListener(
-  'DOMContentLoaded',
-  function () {
-    const zeroLoginContainer = document.querySelector('#zero-login')
-    if (!zeroLoginContainer) return
-    let url = zeroLoginContainer.getAttribute('data-url')
-    if (!url) return
-    if(!url.includes('://')) url = 'https://' + url
-    const source = new EventSource(url + '/sse/lnurl')
-    const canvas = document.createElement('canvas')
-    zeroLoginContainer.appendChild(canvas)
-    const lnurlSpan = document.createElement('span')
-    zeroLoginContainer.appendChild(lnurlSpan)
-
+const MyVueElement = defineCustomElement({
+  props: { zlurl: String },
+  emits: {},
+  data() {
+    return {
+      lnurl: '',
+    }
+  },
+  template: `
+  <div class="zl">
+    <canvas class="zl-canvas" ref="canvas"></canvas>
+    <div class="zl-lnurl-input-group">
+      <input type="text" v-model="lnurl" disabled="true" />
+      <button type="button" @click="copy()">Copy</button>
+    </div>
+  </div>
+  `,
+  styles: [`
+  .zl{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  `],
+  methods: {
+    copy() {
+      navigator.clipboard.writeText(this.lnurl);
+    }
+  },
+  mounted() {
+    const source = new EventSource(this.zlurl + '/sse/lnurl')
     source.addEventListener(
       'message',
-      function (e) {
+      (e) => {
         const parsed = JSON.parse(e.data)
         console.log(parsed)
         console.log(parsed.message)
         if (parsed.message === 'challenge') {
-          lnurlSpan.outerHTML = parsed.encoded
-          QRCode.toCanvas(canvas, parsed.encoded, function (error) {
+          this.lnurl = parsed.encoded
+          QRCode.toCanvas(this.$refs.canvas, parsed.encoded, function (error) {
             if (error) console.error(error)
           })
         }
@@ -55,5 +73,6 @@ document.addEventListener(
     //   false
     // )
   },
-  false
-)
+})
+
+customElements.define('zero-login', MyVueElement)
