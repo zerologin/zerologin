@@ -1,5 +1,7 @@
 <template>
-  <div><h1>zerologin</h1></div>
+  <div>
+    <h1><a href="/" style="color: #000">zerologin</a></h1>
+  </div>
   <div>
     <div v-if="!auth.isLoggedIn">
       <Link href="/login" style="text-decoration: none">
