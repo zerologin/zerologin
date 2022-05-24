@@ -1,5 +1,19 @@
 <template>
   <div>
+    <h1>⚠️ Before adding a domain on Zerologin</h1>
+    <p>
+      Considering you own the domain "mydomain.com", you must chose a subdomain (login.mydomain.com
+      for example) and add a CNAME in your DNS
+    </p>
+    <pre>login CNAME zerologin.co.</pre>
+    <p>From LNURL-Auth specs</p>
+    <em>
+      You should carefully choose which subdomain will be used as LNURL-auth endpoint and stick to
+      chosen subdomain in future. For example, if auth.site.com was initially chosen then changing
+      it to, say, login.site.com will result in a different account for each user because the full
+      domain name is used by wallets as material for key derivation.
+    </em>
+
     <h1>Add domain</h1>
     <el-form
       ref="ruleFormRef"

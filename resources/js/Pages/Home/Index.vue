@@ -105,11 +105,4 @@ const codeComponent = `<head>
     align-self: flex-start;
   }
 }
-
-pre {
-  padding: 10px;
-  background-color: #000;
-  color: #fff;
-  font-weight: bold;
-}
 </style>
