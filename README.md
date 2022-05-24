@@ -1,4 +1,4 @@
-# Zerlogin, a passwordless authentication server
+# Zerologin, a passwordless authentication server
 
 Documentation is available on [zerologin.co](https://zerologin.co)
 

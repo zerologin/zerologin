@@ -1,6 +1,6 @@
 <template>
   <div class="homepage">
-    <h1>Zerlogin, a passwordless authentication server</h1>
+    <h1>Zerologin, a passwordless authentication server</h1>
     <p>Integrate a passwordless authentication on your website at lightning speed...</p>
     <h3 style="align-self: center">...in just 3 steps</h3>
     <div class="start">
