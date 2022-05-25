@@ -1,12 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import LnurlService from 'App/Services/LnurlService'
-import EventEmitter from 'events'
 import Env from '@ioc:Adonis/Core/Env'
 import User from 'App/Models/User'
 import Route from '@ioc:Adonis/Core/Route'
 import * as jose from 'jose'
 import Utils from 'App/Utils'
 import Domain from 'App/Models/Domain'
+import SseLoginService from 'App/Services/SseLoginService'
 
 export default class AuthController {
   public async lnurlChallenge(ctx: HttpContextContract) {
@@ -44,7 +44,7 @@ export default class AuthController {
         }
       )
 
-      AuthController.eventEmitter.emit('loggedin', {
+      SseLoginService.emit('loggedin', {
         message: 'loggedin',
         key,
         k1,
@@ -94,9 +94,6 @@ export default class AuthController {
     LnurlService.removeHash(LnurlService.createHash(k1))
   }
 
-  //TODO: There is some memory leaks on this
-  private static eventEmitter = new EventEmitter()
-
   public async sseLnurl(ctx: HttpContextContract) {
     const { response, request } = ctx
     const headers = {
@@ -124,17 +121,11 @@ export default class AuthController {
     )
 
     const secret = lnurlChallenge.secret
+    SseLoginService.add(secret, response)
     request.request.on('close', () => {
       LnurlService.removeHash(LnurlService.createHash(secret))
+      SseLoginService.delete(secret)
     })
-
-    AuthController.eventEmitter.on(
-      'loggedin',
-      (obj: { message: string; k1: string; sig: string; key: string }) => {
-        if (obj.k1 === secret) {
-          response.response.write(`data: ${JSON.stringify(obj)}\n\n`)
-        }
-      }
-    )
   }
+
 }
