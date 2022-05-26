@@ -7,6 +7,7 @@ import * as jose from 'jose'
 import Utils from 'App/Utils'
 import Domain from 'App/Models/Domain'
 import SseLoginService from 'App/Services/SseLoginService'
+import { string } from '@ioc:Adonis/Core/Helpers'
 
 export default class AuthController {
   public async lnurlChallenge(ctx: HttpContextContract) {
@@ -76,20 +77,19 @@ export default class AuthController {
       hostDomain = 'https://' + domain.rootUrl
     }
 
+    const maxAgeString = '2h'
+    
     const jwt = await new jose.SignJWT({ pubKey: key })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('2h')
+      .setExpirationTime(maxAgeString)
       //TODO: Set audience, issuer
       .sign(Buffer.from(jwtSecret, 'utf-8'))
 
-    const tenDays = 1000 * 60 * 60 * 24 * 10
-    ctx.response.plainCookie('jwt', jwt, {
-      secure: true,
-      httpOnly: true,
-      domain: Utils.removeProtocol(hostDomain).split(':')[0], // Split is for localhost:3333 only
-      maxAge: tenDays,
-    })
+    const maxAge = string.toMs(maxAgeString) / 1000
+    const domain = Utils.removeProtocol(hostDomain).split(':')[0]
+    ctx.response.append('set-cookie', `jwt=${jwt}; Max-Age=${maxAge}; Domain=${domain}; Path=/; HttpOnly; Secure`)
+
     ctx.response.redirect(hostDomain)
     LnurlService.removeHash(LnurlService.createHash(k1))
   }

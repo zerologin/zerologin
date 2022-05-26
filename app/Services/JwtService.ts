@@ -5,7 +5,11 @@ import JwtPayload from 'Contracts/jwtPayload'
 
 class JwtService {
   public getCookie(ctx: HttpContextContract) {
-    return ctx.request.plainCookie('jwt')
+    const cookie = ctx.request.request.headers.cookie?.split('; ').find(c => c.startsWith('jwt='))
+    if (cookie) {
+      return cookie.split('=')[1]
+    }
+    return null
   }
 
   public async verify(jwt: string): Promise<JwtPayload> {
