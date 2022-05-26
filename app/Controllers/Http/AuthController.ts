@@ -8,6 +8,7 @@ import Utils from 'App/Utils'
 import Domain from 'App/Models/Domain'
 import SseLoginService from 'App/Services/SseLoginService'
 import { string } from '@ioc:Adonis/Core/Helpers'
+import Encryption from '@ioc:Adonis/Core/Encryption'
 
 export default class AuthController {
   public async lnurlChallenge(ctx: HttpContextContract) {
@@ -73,7 +74,13 @@ export default class AuthController {
       const externalUrl = Utils.getHost(ctx, false)
       // Check the domain exists and is configured
       const domain = await Domain.query().where('zerologin_url', externalUrl).firstOrFail()
-      jwtSecret = domain.jwtSecret
+      const decryptedJwtSecret: string | null = Encryption.decrypt(domain.jwtSecret)
+      if (decryptedJwtSecret) {
+        jwtSecret = decryptedJwtSecret
+      }
+      else {
+        return ctx.response.unprocessableEntity()
+      }
       hostDomain = 'https://' + domain.rootUrl
     }
 

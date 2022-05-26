@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Utils from 'App/Utils'
+import Encryption from '@ioc:Adonis/Core/Encryption'
 
 export default class DomainsController {
   public async store({ request, response }: HttpContextContract) {
@@ -27,8 +28,9 @@ export default class DomainsController {
 
     let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
     let parsedRootUrl = Utils.getRootDomain(rootUrl)
+    const encryptedSecret = Encryption.encrypt(secret)
 
-    await request.user.related('domains').create({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: secret })
+    await request.user.related('domains').create({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: encryptedSecret })
     response.redirect().back()
   }
 
