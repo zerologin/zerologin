@@ -1,18 +1,8 @@
 <template>
   <div>
-    <h1>⚠️ Before adding a domain on Zerologin</h1>
-    <p>
-      Considering you own the domain "mydomain.com", you must chose a subdomain (login.mydomain.com
-      for example) and add a CNAME in your DNS
-    </p>
-    <pre>login CNAME zerologin.co.</pre>
-    <p>From LNURL-Auth specs</p>
-    <em>
-      You should carefully choose which subdomain will be used as LNURL-auth endpoint and stick to
-      chosen subdomain in future. For example, if auth.site.com was initially chosen then changing
-      it to, say, login.site.com will result in a different account for each user because the full
-      domain name is used by wallets as material for key derivation.
-    </em>
+    <el-alert title="Information" type="info" show-icon :closable="false">
+      For more informations about adding a domain on Zerologin, please <a href="https://docs.zerologin.co/how-to-use-zerologin.html\" target="_blank">read the documentation</a>
+    </el-alert>
 
     <h1>Add domain</h1>
     <el-form
@@ -50,7 +40,7 @@
           <el-button
             size="small"
             type="danger"
-            @click="handleDeleteDomain(scope.row.id, scope.row.rootUrl)"
+            @click="handleDeleteDomain(scope.row.id, scope.row.root_url)"
           >
             Delete
           </el-button>
@@ -91,7 +81,7 @@ const submitForm = async (formEl) => {
         onSuccess: () => {
           ElNotification({
             title: 'Success',
-            message: `${ruleForm.domain} has been added to your account`,
+            message: `${ruleForm.rootUrl} has been added to your account`,
             type: 'success',
             duration: 5000,
           })
@@ -113,13 +103,13 @@ const submitForm = async (formEl) => {
   })
 }
 
-const handleDeleteDomain = (id, domain) => {
+const handleDeleteDomain = (id, rootUrl) => {
   Inertia.delete(`/domains/${id}`, {
     preserveScroll: true,
     onSuccess: () => {
       ElNotification({
         title: 'Success',
-        message: `${domain} has been deleted`,
+        message: `${rootUrl} has been deleted`,
         type: 'success',
         duration: 5000,
       })
