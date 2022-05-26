@@ -26,6 +26,7 @@ Route.inertia('login', 'Auth/Login')
 Route.get('sse/lnurl', 'AuthController.sseLnurl')
 Route.get('lnurl', 'AuthController.lnurlChallenge')
 Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
+Route.get('logout', 'AuthController.logout').middleware('auth')
 
 Route.group(() => {
   Route.get('/', 'AccountsController.index')

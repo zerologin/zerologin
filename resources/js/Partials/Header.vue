@@ -22,7 +22,7 @@
               <Link href="/account">Account</Link>
             </el-dropdown-item>
             <el-dropdown-item divided>
-              <!-- <Link href="/logout">Logout</Link> -->
+              <Link href="/logout">Logout</Link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>

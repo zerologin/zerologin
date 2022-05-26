@@ -78,7 +78,7 @@ export default class AuthController {
     }
 
     const maxAgeString = '2h'
-    
+
     const jwt = await new jose.SignJWT({ pubKey: key })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
@@ -126,6 +126,13 @@ export default class AuthController {
       LnurlService.removeHash(LnurlService.createHash(secret))
       SseLoginService.delete(secret)
     })
+  }
+
+  public async logout(ctx: HttpContextContract) {
+    let hostDomain = Utils.getHost(ctx, true)
+    const domain = Utils.removeProtocol(hostDomain).split(':')[0]
+    ctx.response.append('set-cookie', `jwt=; Max-Age=0; Domain=${domain}; Path=/; HttpOnly; Secure`)
+    ctx.response.redirect('/')
   }
 
 }
