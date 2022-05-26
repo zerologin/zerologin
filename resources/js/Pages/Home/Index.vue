@@ -31,6 +31,8 @@
         your users.
       </p>
 
+      <p>Full documentations are available on <a href="https://docs.zerologin.co" target="_blank">docs.zerologin.co</a></p>
+
       <el-divider />
 
       <h2>FAQ</h2>
