@@ -37,6 +37,10 @@ Route.group(() => {
 Route.group(() => {
   Route.get('/create', 'DomainsController.create')
   Route.post('/', 'DomainsController.store')
+
+  Route.get(':id', 'DomainsController.edit')
+  Route.put(':id', 'DomainsController.update')
+
   Route.delete('/:id', 'DomainsController.delete')
 })
   .prefix('domains')

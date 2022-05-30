@@ -29,7 +29,9 @@
           <Link href="/account" style="text-decoration: none">
             <el-button>Cancel</el-button>
           </Link>
-          <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
+          <el-button type="primary" @click="submitForm(ruleFormRef)">
+            {{ props.domain ? 'Update' : 'Create' }}
+          </el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -42,12 +44,15 @@ import { reactive, ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import { Link } from '@inertiajs/inertia-vue3'
 
+const props = defineProps({ domain: Object })
+console.log(props.domain)
+
 const formSize = ref('default')
 const ruleFormRef = ref()
 const ruleForm = reactive({
-  rootUrl: '',
-  zerologinUrl: '',
-  secret: '',
+  rootUrl: props.domain?.root_url ?? '',
+  zerologinUrl: props.domain?.zerologin_url ?? '',
+  secret: props.domain?.jwt_secret ?? '',
 })
 
 const rules = reactive({
@@ -60,35 +65,54 @@ const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      Inertia.post('/domains', ruleForm, {
-        preserveScroll: true,
-        onSuccess: () => {
-          ElNotification({
-            title: 'Success',
-            message: `${ruleForm.rootUrl} has been added to your account`,
-            type: 'success',
-            duration: 5000,
-          })
-          resetForm(formEl)
-        },
-        onError(err) {
-          console.error(err)
-          for (const key of Object.keys(err)) {
+      if (props.domain) {
+        Inertia.put('/domains/' + props.domain.id, ruleForm, {
+          preserveScroll: true,
+          onSuccess: () => {
             ElNotification({
-              title: 'Error',
-              message: err[key][0],
-              type: 'error',
+              title: 'Success',
+              message: `${ruleForm.rootUrl} has been updated`,
+              type: 'success',
               duration: 5000,
             })
-          }
-        },
-      })
+          },
+          onError(err) {
+            console.error(err)
+            for (const key of Object.keys(err)) {
+              ElNotification({
+                title: 'Error',
+                message: err[key][0],
+                type: 'error',
+                duration: 5000,
+              })
+            }
+          },
+        })
+      } else {
+        Inertia.post('/domains', ruleForm, {
+          preserveScroll: true,
+          onSuccess: () => {
+            ElNotification({
+              title: 'Success',
+              message: `${ruleForm.rootUrl} has been added to your account`,
+              type: 'success',
+              duration: 5000,
+            })
+          },
+          onError(err) {
+            console.error(err)
+            for (const key of Object.keys(err)) {
+              ElNotification({
+                title: 'Error',
+                message: err[key][0],
+                type: 'error',
+                duration: 5000,
+              })
+            }
+          },
+        })
+      }
     }
   })
-}
-
-const resetForm = (formEl) => {
-  if (!formEl) return
-  formEl.resetFields()
 }
 </script>

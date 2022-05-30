@@ -2,39 +2,42 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Utils from 'App/Utils'
 import Encryption from '@ioc:Adonis/Core/Encryption'
+import DomainValidator from 'App/Validators/DomainValidator'
 
 export default class DomainsController {
   public async create({ inertia }: HttpContextContract) {
-    return inertia.render('Domain/Create')
+    return inertia.render('Domain/CreateUpdate')
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const urlSchema = schema.string({ trim: true }, [
-      rules.url({
-        protocols: ['http', 'https'],
-        requireTld: true,
-        requireProtocol: false,
-        requireHost: true,
-        bannedHosts: ['zerologin.co'],
-      })])
-    const validationSchema = schema.create({
-      zerologinUrl: urlSchema,
-      rootUrl: urlSchema,
-      secret: schema.string({ trim: true }),
-    })
-    const { zerologinUrl, rootUrl, secret } = await request.validate({
-      schema: validationSchema,
-      messages: {
-        'required': 'The {{ field }} is required',
-        'domain.url': 'Root domain must be a valid url',
-      },
-    })
+    const { zerologinUrl, rootUrl, secret } = await request.validate(DomainValidator)
 
     let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
     let parsedRootUrl = Utils.getRootDomain(rootUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
     await request.user.related('domains').create({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: encryptedSecret })
+    response.redirect().toRoute('account_index')
+  }
+
+  public async edit({ request, inertia }: HttpContextContract) {
+    const { id } = request.params()
+    const domain = await request.user.related('domains').query().where('id', id).firstOrFail()
+    return inertia.render('Domain/CreateUpdate', { domain: { ...domain.serialize(), jwt_secret: Encryption.decrypt(domain.jwtSecret) } })
+  }
+
+  public async update({ request, response }: HttpContextContract) {
+    const { zerologinUrl, rootUrl, secret } = await request.validate(DomainValidator)
+
+    const { id } = request.params()
+    const domain = await request.user.related('domains').query().where('id', id).firstOrFail()
+
+    let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
+    let parsedRootUrl = Utils.getRootDomain(rootUrl)
+    const encryptedSecret = Encryption.encrypt(secret)
+
+    domain.merge({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: encryptedSecret })
+    await domain.save()
     response.redirect().toRoute('account_index')
   }
 

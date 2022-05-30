@@ -22,6 +22,9 @@
           >
             Delete
           </el-button>
+          <Link :href="`/domains/${scope.row.id}`" style="text-decoration: none">
+            <el-button size="small">Edit</el-button>
+          </Link>
         </template>
       </el-table-column>
     </el-table>
