@@ -4,6 +4,10 @@ import Utils from 'App/Utils'
 import Encryption from '@ioc:Adonis/Core/Encryption'
 
 export default class DomainsController {
+  public async create({ inertia }: HttpContextContract) {
+    return inertia.render('Domain/Create')
+  }
+
   public async store({ request, response }: HttpContextContract) {
     const urlSchema = schema.string({ trim: true }, [
       rules.url({
@@ -31,7 +35,7 @@ export default class DomainsController {
     const encryptedSecret = Encryption.encrypt(secret)
 
     await request.user.related('domains').create({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: encryptedSecret })
-    response.redirect().back()
+    response.redirect().toRoute('account_index')
   }
 
   public async delete({ request, response }: HttpContextContract) {

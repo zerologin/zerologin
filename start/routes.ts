@@ -29,12 +29,13 @@ Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
 Route.get('logout', 'AuthController.logout').middleware('auth')
 
 Route.group(() => {
-  Route.get('/', 'AccountsController.index')
+  Route.get('/', 'AccountsController.index').as('account_index')
 })
   .prefix('account')
   .middleware('auth')
 
 Route.group(() => {
+  Route.get('/create', 'DomainsController.create')
   Route.post('/', 'DomainsController.store')
   Route.delete('/:id', 'DomainsController.delete')
 })
