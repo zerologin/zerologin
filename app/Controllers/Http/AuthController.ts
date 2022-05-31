@@ -82,6 +82,10 @@ export default class AuthController {
         return ctx.response.unprocessableEntity()
       }
       hostDomain = 'https://' + domain.rootUrl
+
+      await domain.related('domainUsers').firstOrCreate({
+        pubKey: key
+      })
     }
 
     const maxAgeString = '2h'

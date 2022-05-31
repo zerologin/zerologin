@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from 'App/Models/User'
+import DomainUser from 'App/Models/DomainUser'
 
 export default class Domain extends BaseModel {
   @column({ isPrimary: true })
@@ -25,4 +26,7 @@ export default class Domain extends BaseModel {
 
   @column()
   public jwtSecret: string
+
+  @hasMany(() => DomainUser)
+  public domainUsers: HasMany<typeof DomainUser>
 }

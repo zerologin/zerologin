@@ -75,8 +75,6 @@ const MyVueElement = defineCustomElement({
       'message',
       (e) => {
         const parsed = JSON.parse(e.data)
-        console.log(parsed)
-        console.log(parsed.message)
         if (parsed.message === 'challenge') {
           this.lnurl = parsed.encoded
           QRCode.toCanvas(this.$refs.canvas, parsed.encoded, function (error) {
@@ -84,7 +82,6 @@ const MyVueElement = defineCustomElement({
           })
         }
         if (parsed.message === 'loggedin') {
-          console.log('in loggedin', { ...parsed })
           window.location = parsed.callback
         }
       },
