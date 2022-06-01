@@ -7,7 +7,7 @@ const MyVueElement = defineCustomElement({
   data() {
     return {
       lnurl: '',
-      textCopy: 'Click to copy'
+      textCopy: 'Click to copy',
     }
   },
   template: `
@@ -20,7 +20,8 @@ const MyVueElement = defineCustomElement({
     <div class="zl-powered">Powered by <a href="https://zerologin.co" target="_blank">Zerologin</a></div>
   </div>
   `,
-  styles: [`
+  styles: [
+    `
   .zl{
     display: flex;
     flex-direction: column;
@@ -61,13 +62,16 @@ const MyVueElement = defineCustomElement({
   .zl-powered > a{
     color: #000;
   }
-  `],
+  `,
+  ],
   methods: {
     copy() {
       this.textCopy = 'Copied'
-      navigator.clipboard.writeText(this.lnurl);
-      setTimeout(() => { this.textCopy = 'Click to copy' }, 3000)
-    }
+      navigator.clipboard.writeText(this.lnurl)
+      setTimeout(() => {
+        this.textCopy = 'Click to copy'
+      }, 3000)
+    },
   },
   mounted() {
     const source = new EventSource(this.zlurl + '/sse/lnurl')

@@ -2,7 +2,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class DomainValidator {
-  constructor(protected ctx: HttpContextContract) { }
+  constructor(protected ctx: HttpContextContract) {}
 
   private urlSchema = schema.string({ trim: true }, [
     rules.url({
@@ -11,7 +11,8 @@ export default class DomainValidator {
       requireProtocol: false,
       requireHost: true,
       bannedHosts: ['zerologin.co'],
-    })])
+    }),
+  ])
   public schema = schema.create({
     zerologinUrl: this.urlSchema,
     rootUrl: this.urlSchema,

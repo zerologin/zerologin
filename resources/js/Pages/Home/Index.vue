@@ -31,7 +31,10 @@
         your users.
       </p>
 
-      <p>Full documentations are available on <a href="https://docs.zerologin.co" target="_blank">docs.zerologin.co</a></p>
+      <p>
+        Full documentations are available on
+        <a href="https://docs.zerologin.co" target="_blank">docs.zerologin.co</a>
+      </p>
 
       <el-divider />
 
@@ -72,7 +75,8 @@
       <h3>Where are stored my users?</h3>
       <p>
         It is the responsibility of your application to store your users. Zerologin facilitates
-        LNURL-Auth integration for everyone. You can link your users in your database using the user pubkey
+        LNURL-Auth integration for everyone. You can link your users in your database using the user
+        pubkey
       </p>
 
       <el-divider />

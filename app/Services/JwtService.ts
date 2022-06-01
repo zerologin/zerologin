@@ -14,7 +14,7 @@ class JwtService {
   }
 
   public getFromCookie(ctx: HttpContextContract) {
-    const cookie = ctx.request.request.headers.cookie?.split('; ').find(c => c.startsWith('jwt='))
+    const cookie = ctx.request.request.headers.cookie?.split('; ').find((c) => c.startsWith('jwt='))
     if (cookie) {
       return cookie.split('=')[1]
     }

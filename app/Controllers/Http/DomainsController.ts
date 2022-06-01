@@ -16,14 +16,20 @@ export default class DomainsController {
     let parsedRootUrl = Utils.getRootDomain(rootUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
-    await request.user.related('domains').create({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: encryptedSecret })
+    await request.user.related('domains').create({
+      rootUrl: parsedRootUrl,
+      zerologinUrl: parsedZerologinUrl,
+      jwtSecret: encryptedSecret,
+    })
     response.redirect().toRoute('account_index')
   }
 
   public async edit({ request, inertia }: HttpContextContract) {
     const { id } = request.params()
     const domain = await request.user.related('domains').query().where('id', id).firstOrFail()
-    return inertia.render('Domain/CreateUpdate', { domain: { ...domain.serialize(), jwt_secret: Encryption.decrypt(domain.jwtSecret) } })
+    return inertia.render('Domain/CreateUpdate', {
+      domain: { ...domain.serialize(), jwt_secret: Encryption.decrypt(domain.jwtSecret) },
+    })
   }
 
   public async update({ request, response }: HttpContextContract) {
@@ -36,7 +42,11 @@ export default class DomainsController {
     let parsedRootUrl = Utils.getRootDomain(rootUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
-    domain.merge({ rootUrl: parsedRootUrl, zerologinUrl: parsedZerologinUrl, jwtSecret: encryptedSecret })
+    domain.merge({
+      rootUrl: parsedRootUrl,
+      zerologinUrl: parsedZerologinUrl,
+      jwtSecret: encryptedSecret,
+    })
     await domain.save()
     response.redirect().toRoute('account_index')
   }

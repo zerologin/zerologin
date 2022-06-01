@@ -77,19 +77,21 @@ export default class AuthController {
       const decryptedJwtSecret: string | null = Encryption.decrypt(domain.jwtSecret)
       if (decryptedJwtSecret) {
         jwtSecret = decryptedJwtSecret
-      }
-      else {
+      } else {
         return ctx.response.unprocessableEntity()
       }
       hostDomain = 'https://' + domain.rootUrl
 
       const domainUser = await domain.related('domainUsers').firstOrCreate({
-        pubKey: key
+        pubKey: key,
       })
 
       const refreshToken = await RefreshTokenService.generateToken()
       await domainUser.related('refreshTokens').create(refreshToken)
-      ctx.response.append('set-cookie', RefreshTokenService.getCookie(refreshToken.token, hostDomain))
+      ctx.response.append(
+        'set-cookie',
+        RefreshTokenService.getCookie(refreshToken.token, hostDomain)
+      )
     }
 
     const jwt = await JwtService.generateToken(key, jwtSecret)
@@ -141,5 +143,4 @@ export default class AuthController {
     ctx.response.append('set-cookie', `jwt=; Max-Age=0; Domain=${domain}; Path=/; HttpOnly; Secure`)
     ctx.response.redirect('/')
   }
-
 }
