@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Utils from 'App/Utils'
 import Encryption from '@ioc:Adonis/Core/Encryption'
 import DomainValidator from 'App/Validators/DomainValidator'
