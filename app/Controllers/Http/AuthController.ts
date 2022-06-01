@@ -92,12 +92,10 @@ export default class AuthController {
       ctx.response.append('set-cookie', RefreshTokenService.getCookie(refreshToken.token, hostDomain))
     }
 
-    const maxAgeString = '2h'
-
-    const jwt = await JwtService.generateToken(key, maxAgeString, jwtSecret)
+    const jwt = await JwtService.generateToken(key, jwtSecret)
 
     const domain = Utils.removeProtocol(hostDomain).split(':')[0]
-    ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain, maxAgeString))
+    ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain))
 
     ctx.response.redirect(hostDomain)
     LnurlService.removeHash(LnurlService.createHash(k1))

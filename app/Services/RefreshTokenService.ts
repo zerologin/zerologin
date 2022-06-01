@@ -6,6 +6,14 @@ import { string } from '@ioc:Adonis/Core/Helpers'
 import Utils from 'App/Utils'
 
 class RefreshTokenService {
+    private static maxAge = '7d'
+    public getMaxAgeString() {
+        return RefreshTokenService.maxAge
+    }
+    public getMaxAgeSeconds() {
+        return string.toMs(RefreshTokenService.maxAge) / 1000
+    }
+
     public getFromCookie(ctx: HttpContextContract) {
         const cookie = ctx.request.request.headers.cookie?.split('; ').find(c => c.startsWith('refresh_token='))
         if (cookie) {
@@ -15,16 +23,15 @@ class RefreshTokenService {
     }
 
     public getCookie(token: string, domain: string) {
-        const maxAge = string.toMs('7d') / 1000
         const clearedDomain = Utils.removeProtocol(domain).split(':')[0]
-        return `refresh_token=${token}; Max-Age=${maxAge}; Domain=${clearedDomain}; Path=/; HttpOnly; Secure`
+        return `refresh_token=${token}; Max-Age=${this.getMaxAgeSeconds()}; Domain=${clearedDomain}; Path=/; HttpOnly; Secure`
     }
 
     public async generateToken(): Promise<RefreshToken> {
         const randomBytes = await this.getRandomBytes(64)
         const refreshToken = new RefreshToken()
         refreshToken.token = Buffer.from(randomBytes).toString('base64')
-        refreshToken.expiredAt = DateTime.utc().plus({ days: 7 })
+        refreshToken.expiredAt = DateTime.utc().plus(this.getMaxAgeSeconds() * 1000)
         return refreshToken
     }
 

@@ -35,9 +35,9 @@ export default class RefreshTokensController {
             return ctx.response.unprocessableEntity()
         }
 
-        const jwt = await JwtService.generateToken(domainUser.pubKey, '2h', secret)
+        const jwt = await JwtService.generateToken(domainUser.pubKey, secret)
 
-        ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain.rootUrl, '2h'))
+        ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain.rootUrl))
         ctx.response.append('set-cookie', RefreshTokenService.getCookie(newRefreshToken.token, domain.rootUrl))
         ctx.response.ok('refresh ok')
     }
