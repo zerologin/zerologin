@@ -30,7 +30,7 @@
     "@poppinss/utils" "^4.0.4"
     semver "^7.3.7"
 
-"@adonisjs/assembler@^5.6.2":
+"@adonisjs/assembler@^5.7.0":
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/@adonisjs/assembler/-/assembler-5.7.0.tgz#d1ab24d671df804f93235910fb23cbba9b454b34"
   integrity sha512-13ombiG4YLzrOnYvY6qIAHRX9Wc6KnAbmxmyVTd3gxLq/knqHLX8apwk9O/hebf7t8lBxwnIVmw61C9dYBBsqg==

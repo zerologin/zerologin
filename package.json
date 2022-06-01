@@ -42,7 +42,7 @@
     "printWidth": 100
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^5.6.2",
+    "@adonisjs/assembler": "^5.7.0",
     "@japa/preset-adonis": "^1.0.15",
     "@japa/runner": "^2.0.8",
     "@symfony/webpack-encore": "^2.1.0",
