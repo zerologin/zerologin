@@ -4,7 +4,7 @@ import JwtService from 'App/Services/JwtService'
 
 export default class SilentAuthMiddleware {
   public async handle(ctx: HttpContextContract, next: () => Promise<void>) {
-    const jwtCookie = JwtService.getCookie(ctx)
+    const jwtCookie = JwtService.getFromCookie(ctx)
     if (!jwtCookie) {
       return await next()
     }

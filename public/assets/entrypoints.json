@@ -2,15 +2,15 @@
   "entrypoints": {
     "app": {
       "css": [
-        "http://localhost:8081/assets/app.css"
+        "https://webpack.zerologin.test:8081/assets/app.css"
       ],
       "js": [
-        "http://localhost:8081/assets/app.js"
+        "https://webpack.zerologin.test:8081/assets/app.js"
       ]
     },
     "zerologin": {
       "js": [
-        "http://localhost:8081/assets/zerologin.js"
+        "https://webpack.zerologin.test:8081/assets/zerologin.js"
       ]
     }
   }

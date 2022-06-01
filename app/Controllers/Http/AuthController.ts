@@ -3,12 +3,12 @@ import LnurlService from 'App/Services/LnurlService'
 import Env from '@ioc:Adonis/Core/Env'
 import User from 'App/Models/User'
 import Route from '@ioc:Adonis/Core/Route'
-import * as jose from 'jose'
 import Utils from 'App/Utils'
 import Domain from 'App/Models/Domain'
 import SseLoginService from 'App/Services/SseLoginService'
-import { string } from '@ioc:Adonis/Core/Helpers'
 import Encryption from '@ioc:Adonis/Core/Encryption'
+import RefreshTokenService from 'App/Services/RefreshTokenService'
+import JwtService from 'App/Services/JwtService'
 
 export default class AuthController {
   public async lnurlChallenge(ctx: HttpContextContract) {
@@ -83,23 +83,21 @@ export default class AuthController {
       }
       hostDomain = 'https://' + domain.rootUrl
 
-      await domain.related('domainUsers').firstOrCreate({
+      const domainUser = await domain.related('domainUsers').firstOrCreate({
         pubKey: key
       })
+
+      const refreshToken = await RefreshTokenService.generateToken()
+      await domainUser.related('refreshTokens').create(refreshToken)
+      ctx.response.append('set-cookie', RefreshTokenService.getCookie(refreshToken.token, hostDomain))
     }
 
     const maxAgeString = '2h'
 
-    const jwt = await new jose.SignJWT({ pubKey: key })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime(maxAgeString)
-      //TODO: Set audience, issuer
-      .sign(Buffer.from(jwtSecret, 'utf-8'))
+    const jwt = await JwtService.generateToken(key, maxAgeString, jwtSecret)
 
-    const maxAge = string.toMs(maxAgeString) / 1000
     const domain = Utils.removeProtocol(hostDomain).split(':')[0]
-    ctx.response.append('set-cookie', `jwt=${jwt}; Max-Age=${maxAge}; Domain=${domain}; Path=/; HttpOnly; Secure`)
+    ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain, maxAgeString))
 
     ctx.response.redirect(hostDomain)
     LnurlService.removeHash(LnurlService.createHash(k1))
