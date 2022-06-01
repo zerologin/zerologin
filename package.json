@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node ace serve --watch --encore-args=\"--port 8081 --https --allowed-hosts all --host webpack.zerologin.test\"",
+    "dev": "node ace serve --watch --encore-args=\"--port 8081\"",
+    "dev-domain": "node ace serve --watch --encore-args=\"--port 8081 --https --allowed-hosts all --host webpack.zerologin.test\"",
     "build": "node ace build --production",
     "postbuild": "npm run asset && npm run env && npm run migrate",
     "asset": "cp build/public/assets/zerologin.*.js build/public/zerologin.js",
