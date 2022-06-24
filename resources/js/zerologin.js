@@ -48,7 +48,7 @@ const ZeroLoginElement = defineCustomElement({
       }
     }
   },
-  async mounted() {
+  mounted() {
     const source = new EventSource(this.zlurl + '/sse/lnurl')
     source.addEventListener(
       'message',
