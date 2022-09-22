@@ -4,6 +4,7 @@ import JwtService from 'App/Services/JwtService'
 import RefreshTokenService from 'App/Services/RefreshTokenService'
 import { DateTime } from 'luxon'
 import Encryption from '@ioc:Adonis/Core/Encryption'
+import Utils from 'App/Utils'
 
 export default class RefreshTokensController {
   public async refresh(ctx: HttpContextContract) {
@@ -36,10 +37,12 @@ export default class RefreshTokensController {
 
     const jwt = await JwtService.generateToken(domainUser.pubKey, secret)
 
-    ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain.rootUrl))
+    const rootUrl = Utils.removeProtocol(domain.rootUrl).split(':')[0]
+
+    ctx.response.append('set-cookie', JwtService.getCookie(jwt, rootUrl))
     ctx.response.append(
       'set-cookie',
-      RefreshTokenService.getCookie(newRefreshToken.token, domain.rootUrl)
+      RefreshTokenService.getCookie(newRefreshToken.token, rootUrl)
     )
     ctx.response.ok('refresh ok')
   }
