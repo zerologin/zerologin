@@ -23,11 +23,13 @@ export default class AuthController {
       }
 
       let appUrl = Env.get('APP_URL')
-      if (Utils.isExternal(Utils.getHost(ctx, false))) {
+      let callbackRouteName = 'callback_internal'
+      if (Utils.isExternal(ctx)) {
         const externalUrl = Utils.getHost(ctx, true)
         // Check the domain exists and is configured
         await Domain.query().where('zerologin_url', Utils.removeProtocol(externalUrl)).firstOrFail()
         appUrl = externalUrl
+        callbackRouteName = 'callback'
       } else {
         let user = await User.query().where('pub_key', key).first()
         if (user === null) {
@@ -35,11 +37,14 @@ export default class AuthController {
         }
       }
 
-      const callbackRoute = Route.makeSignedUrl(
-        'callback',
+      const { publicId } = ctx.request.qs()
+
+      let callbackRoute = Route.makeSignedUrl(
+        callbackRouteName,
         {
           key,
           k1,
+          publicId
         },
         {
           expiresIn: '1m',
@@ -65,22 +70,21 @@ export default class AuthController {
       return 'Login failed'
     }
 
-    const { k1, key } = ctx.request.params()
+    const { k1, key, publicId } = ctx.request.params()
 
     let hostDomain = Utils.getHost(ctx, true)
     let jwtSecret = Env.get('JWT_SECRET')
 
-    if (Utils.isExternal(hostDomain)) {
-      const externalUrl = Utils.getHost(ctx, false)
+    if (Utils.isExternal(ctx)) {
       // Check the domain exists and is configured
-      const domain = await Domain.query().where('zerologin_url', externalUrl).firstOrFail()
+      const domain = await Domain.query().where('public_id', publicId).firstOrFail()
       const decryptedJwtSecret: string | null = Encryption.decrypt(domain.jwtSecret)
       if (decryptedJwtSecret) {
         jwtSecret = decryptedJwtSecret
       } else {
         return ctx.response.unprocessableEntity()
       }
-      hostDomain = 'https://' + domain.rootUrl
+      hostDomain = ctx.request.protocol() + '://' + domain.rootUrl
 
       const domainUser = await domain.related('domainUsers').firstOrCreate({
         pubKey: key,
@@ -95,12 +99,14 @@ export default class AuthController {
     }
 
     const jwt = await JwtService.generateToken(key, jwtSecret)
+    const decoded = JwtService.decode(jwt)
 
     const domain = Utils.removeProtocol(hostDomain).split(':')[0]
     ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain))
 
-    ctx.response.redirect(hostDomain)
     LnurlService.removeHash(LnurlService.createHash(k1))
+
+    return { pubkey: decoded.pubKey }
   }
 
   public async sseLnurl(ctx: HttpContextContract) {
@@ -113,20 +119,23 @@ export default class AuthController {
     }
     response.response.writeHead(200, headers)
 
-    const hostWithProtocol = Utils.getHost(ctx, true)
-    const hostWithoutProtocol = Utils.getHost(ctx, false)
-    const rootDomain = Utils.getRootDomain(hostWithProtocol)
+    const host = Utils.getHost(ctx, true)
+    const rootDomain = Utils.getRootDomain(host)
 
-    let domain = rootDomain
-    if (Utils.isExternal(hostWithoutProtocol)) {
-      const externalDomain = await Domain.query().where('zerologin_url', rootDomain).firstOrFail()
-      domain = externalDomain.zerologinUrl
+    let domain = host
+    let urlSuffix = '/api/internal'
+
+    const { publicId } = ctx.request.qs()
+    if (Utils.isExternal(ctx)) {
+      const externalDomain = await Domain.query().where('public_id', publicId).firstOrFail()
+      domain = ctx.request.protocol() + '://' + externalDomain.zerologinUrl
+      urlSuffix = '/api/v1'
     }
 
-    const lnurlChallenge = LnurlService.generateNewUrl(hostWithProtocol)
+    const lnurlChallenge = LnurlService.generateNewUrl(domain + urlSuffix, publicId)
 
     response.response.write(
-      `data: ${JSON.stringify({ message: 'challenge', domain, ...lnurlChallenge })}\n\n`
+      `data: ${JSON.stringify({ message: 'challenge', rootDomain, ...lnurlChallenge })}\n\n`
     )
 
     const secret = lnurlChallenge.secret

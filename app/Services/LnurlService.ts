@@ -35,13 +35,23 @@ class LnurlAuth {
     this._usedHashes = this._usedHashes.filter((h) => h !== hash)
   }
 
-  public generateNewUrl(hostname: string) {
+  public generateNewUrl(hostname: string, publicId?: string) {
     const secret = this.generateSecret()
     this.addHash(this.createHash(secret))
-    const url = `${hostname}/lnurl?tag=login&k1=${secret}`
+    const url = new URL(hostname + '/lnurl')
+
+    url.searchParams.append('tag', 'login')
+    url.searchParams.append('k1', secret)
+
+    if (publicId) {
+      url.searchParams.append('publicId', publicId)
+    }
+    
+    const urlString = url.toString()
+
     return {
-      url,
-      encoded: lnurl.encode(url).toUpperCase(),
+      url: urlString,
+      encoded: lnurl.encode(urlString).toUpperCase(),
       secret,
     }
   }

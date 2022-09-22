@@ -1,12 +1,19 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Env from '@ioc:Adonis/Core/Env'
 
 class Utils {
-  public isExternal(host: string) {
-    return Env.get('APP_URL').split('://')[1] !== this.removeProtocol(host)
+  public isExternal({ request }: HttpContextContract) {
+    return !request.parsedUrl.path?.includes('api/internal')
   }
 
   public getHost({ request }: HttpContextContract, protocol: boolean = false) {
+    if (request.headers().origin) {
+      const host = request.headers().origin!
+      if (protocol) {
+        return host
+      }
+      return this.removeProtocol(host)
+    }
+    
     if (protocol) {
       return request.protocol() + '://' + request.host()
     }

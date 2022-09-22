@@ -41,6 +41,11 @@ class JwtService {
     })
     return <JwtPayload>payload
   }
+
+  public decode(jwt: string): JwtPayload {
+    const decoded = jose.decodeJwt(jwt)
+    return <JwtPayload>decoded
+  }
 }
 
 export default new JwtService()

@@ -1,9 +1,10 @@
 import QRCode from 'qrcode'
+import ky from 'ky'
 import { defineCustomElement } from 'vue'
 
 const ZeroLoginElement = defineCustomElement({
-  props: { zlurl: String },
-  emits: {},
+  props: { zlurl: String, publicId: String },
+  emits: ['success', 'error'],
   data() {
     return {
       lnurl: '',
@@ -42,14 +43,20 @@ const ZeroLoginElement = defineCustomElement({
       await window.webln.enable()
       try {
         await webln.lnurl(this.lnurl)
+      } catch (e) {
+        console.error(e)
       }
-      catch (e) {
-        console.error(e);
-      }
-    }
+    },
   },
   mounted() {
-    const source = new EventSource(this.zlurl + '/sse/lnurl')
+    const prefixUrl = this.zlurl.includes('api/internal') ? this.zlurl : `${this.zlurl}/api/v1`
+    const url = new URL(prefixUrl + '/sse/lnurl')
+
+    if (this.publicId) {
+      url.searchParams.append('publicId', this.publicId)
+    }
+
+    const source = new EventSource(url)
     source.addEventListener(
       'message',
       (e) => {
@@ -59,18 +66,26 @@ const ZeroLoginElement = defineCustomElement({
           QRCode.toCanvas(this.$refs.canvas, parsed.encoded, function (error) {
             if (error) console.error(error)
           })
-
-
         }
         if (parsed.message === 'loggedin') {
-          window.location = parsed.callback
+          ky.post(parsed.callback, {
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          })
+            .json()
+            .then((res) => {
+              this.$emit('success', res.body)
+            })
+            .catch((err) => {
+              this.$emit('error', err)
+            })
         }
       },
       false
     )
 
     const maxInterval = 1500
-    let currentIntervalChecking = 0;
+    let currentIntervalChecking = 0
     const intervalTime = 100
     const interval = setInterval(() => {
       currentIntervalChecking += intervalTime
@@ -82,7 +97,6 @@ const ZeroLoginElement = defineCustomElement({
         clearInterval(interval)
       }
     }, intervalTime)
-
   },
   styles: [
     `
@@ -150,7 +164,7 @@ const ZeroLoginElement = defineCustomElement({
     color: #000;
   }
   `,
-  ]
+  ],
 })
 
 customElements.define('zero-login', ZeroLoginElement)

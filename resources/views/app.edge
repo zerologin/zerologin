@@ -7,7 +7,9 @@
   <meta name="description" content="An open source passwordless identity provider using LNURL">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>0️⃣</text></svg>">
+  @if(env('NODE_ENV') === 'production')
   <script async defer data-website-id="14e141dc-ebe2-42a7-ae72-0b126947e271" src="https://a.zerologin.co/umami.js"></script>
+  @endif
 
   @entryPointStyles('app')
   @entryPointScripts('app')

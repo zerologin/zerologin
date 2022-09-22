@@ -18,5 +18,5 @@ Inertia.share({
   auth: (ctx) => {
     return { isLoggedIn: !!ctx.request.user, username: ctx.request.user?.pubKey }
   },
-  appUrl: () => Env.get('APP_URL'),
+  appUrl: () => Env.get('APP_URL') + '/api/internal',
 }).version(() => Inertia.manifestFile('public/assets/manifest.json'))

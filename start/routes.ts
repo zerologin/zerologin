@@ -23,11 +23,20 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.get('/', 'HomeController.index')
 Route.inertia('login', 'Auth/Login')
 
-Route.get('sse/lnurl', 'AuthController.sseLnurl')
-Route.get('lnurl', 'AuthController.lnurlChallenge')
-Route.get('callback/:key/:k1', 'AuthController.callback').as('callback')
-Route.get('logout', 'AuthController.logout').middleware('auth')
-Route.post('refresh-token', 'RefreshTokensController.refresh')
+Route.group(() => {
+  Route.get('sse/lnurl', 'AuthController.sseLnurl')
+  Route.get('lnurl', 'AuthController.lnurlChallenge')
+  Route.post('callback/:key/:k1', 'AuthController.callback').as('callback_internal')
+  Route.get('logout', 'AuthController.logout').middleware('auth')
+}).prefix('api/internal')
+
+Route.group(() => {
+  Route.get('sse/lnurl', 'AuthController.sseLnurl')
+  Route.get('lnurl', 'AuthController.lnurlChallenge')
+  Route.post('callback/:key/:k1/:publicId', 'AuthController.callback').as('callback')
+  Route.get('logout', 'AuthController.logout').middleware('auth')
+  Route.post('refresh-token', 'RefreshTokensController.refresh')
+}).prefix('api/v1')
 
 Route.group(() => {
   Route.get('/', 'AccountsController.index').as('account_index')
