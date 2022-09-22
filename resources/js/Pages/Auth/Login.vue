@@ -1,6 +1,6 @@
 <template>
   <div>
-    <zero-login :zlurl="appUrl" @success="success" @error="error"></zero-login>
+    <zerologin-auth :url="appUrl" @success="success" @error="error"></zerologin-auth>
   </div>
 </template>
 

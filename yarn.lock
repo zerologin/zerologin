@@ -2412,6 +2412,15 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
+"@zerologin/elements@^0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@zerologin/elements/-/elements-0.0.3-beta.tgz#0cb34117ca7cf87689eb846381d84b6b3a66501b"
+  integrity sha512-XeFcOFvMdYQwu7qJCDPwpV67WuJGZlJmxuBc057BTgxRyau3A68YszazoTZ72wZtv4GrjYrGxIx22PiFZyOW4Q==
+  dependencies:
+    ky "^0.31.3"
+    qrcode "^1.5.1"
+    vue "^3.2.37"
+
 abort-controller@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz#eaf54d53b62bae4138e809ca225c8439a6efb392"
@@ -8799,7 +8808,7 @@ vue-loader@^17.0.0:
     hash-sum "^2.0.0"
     loader-utils "^2.0.0"
 
-vue@^3.2.39:
+vue@^3.2.37, vue@^3.2.39:
   version "3.2.39"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.39.tgz#de071c56c4c32c41cbd54e55f11404295c0dd62d"
   integrity sha512-tRkguhRTw9NmIPXhzk21YFBqXHT2t+6C6wPOgQ50fcFVWnPdetmRqbmySRHznrYjX2E47u0cGlKGcxKZJ38R/g==

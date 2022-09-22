@@ -7,11 +7,6 @@
       "js": [
         "http://localhost:8081/assets/app.js"
       ]
-    },
-    "zerologin": {
-      "js": [
-        "http://localhost:8081/assets/zerologin.js"
-      ]
     }
   }
 }

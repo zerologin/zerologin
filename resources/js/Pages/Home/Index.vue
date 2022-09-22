@@ -10,12 +10,15 @@
       <h2>Step 2</h2>
       <div>Add your domain name in your Zerologin dashboard + define a secret</div>
       <div>
-        then add a CNAME in your DNS
+        (Optional. Only if using public instance) then add a CNAME in your DNS
         <pre>login CNAME zerologin.co.</pre>
       </div>
 
       <h2>Step 3</h2>
-      <div>Add zerologin's auth component in your website</div>
+      <div>Install zerologin's auth component</div>
+      <pre>{{ installComponent }}</pre>
+
+      <div>Add zerologin's auth component on your page</div>
       <pre>{{ codeComponent }}</pre>
 
       <p>
@@ -92,12 +95,12 @@
 
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
-const codeComponent = `<head>
-  <script src="https://login.yoursuperwebsite.com/zerologin.js" defer />
-</head>
+const installComponent = `npm install @zerologin/elements`
+const codeComponent = `import "@zerologin/elements"
+...
 <body>
   <h1>Your super website</h1>
-  <zero-login zlurl="https://login.yoursuperwebsite.com"></zero-login>
+  <zerologin-auth url="https://login.yoursuperwebsite.com" public-id="your-id"></zerologin-auth>
 </body>`
 </script>
 

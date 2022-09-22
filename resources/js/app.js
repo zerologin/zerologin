@@ -7,6 +7,7 @@ import Layout from './Layouts/Main'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
+import '@zerologin/elements'
 
 createInertiaApp({
   resolve: (name) => {
