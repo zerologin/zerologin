@@ -27,6 +27,9 @@ export default class Domain extends BaseModel {
   @column()
   public jwtSecret: string
 
+  @column()
+  public publicId: string
+
   @hasMany(() => DomainUser)
   public domainUsers: HasMany<typeof DomainUser>
 }

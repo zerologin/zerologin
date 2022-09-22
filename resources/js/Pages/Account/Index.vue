@@ -8,6 +8,7 @@
     <el-table :data="domains" stripe>
       <el-table-column prop="root_url" label="Root" />
       <el-table-column prop="zerologin_url" label="Zerologin" />
+      <el-table-column prop="public_id" label="Public ID" />
       <el-table-column prop="created_at" label="Created at">
         <template #default="scope">
           {{ DateTime.fromISO(scope.row.created_at).toLocaleString(DateTime.DATE_SHORT) }}
@@ -15,6 +16,9 @@
       </el-table-column>
       <el-table-column label="Operations" align="right">
         <template #default="scope">
+          <Link :href="`/domains/${scope.row.id}`" style="text-decoration: none; margin-right:3px">
+            <el-button size="small">Edit</el-button>
+          </Link>
           <el-button
             size="small"
             type="danger"
@@ -22,9 +26,6 @@
           >
             Delete
           </el-button>
-          <Link :href="`/domains/${scope.row.id}`" style="text-decoration: none">
-            <el-button size="small">Edit</el-button>
-          </Link>
         </template>
       </el-table-column>
     </el-table>
