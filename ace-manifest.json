@@ -126,6 +126,12 @@
           "type": "array",
           "description": "Define a custom set of seeders files names to run",
           "alias": "f"
+        },
+        {
+          "name": "compact-output",
+          "propertyName": "compactOutput",
+          "type": "boolean",
+          "description": "A compact single-line output"
         }
       ]
     },
@@ -160,6 +166,13 @@
           "type": "boolean",
           "alias": "c",
           "description": "Generate the controller for the model"
+        },
+        {
+          "name": "factory",
+          "propertyName": "factory",
+          "type": "boolean",
+          "alias": "f",
+          "description": "Generate a factory for the model"
         }
       ]
     },
@@ -223,6 +236,37 @@
       ],
       "aliases": [],
       "flags": []
+    },
+    "make:factory": {
+      "settings": {},
+      "commandPath": "@adonisjs/lucid/build/commands/MakeFactory",
+      "commandName": "make:factory",
+      "description": "Make a new factory",
+      "args": [
+        {
+          "type": "string",
+          "propertyName": "model",
+          "name": "model",
+          "required": true,
+          "description": "The name of the model"
+        }
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "model-path",
+          "propertyName": "modelPath",
+          "type": "string",
+          "description": "The path to the model"
+        },
+        {
+          "name": "exact",
+          "propertyName": "exact",
+          "type": "boolean",
+          "description": "Create the factory with the exact name as provided",
+          "alias": "e"
+        }
+      ]
     },
     "db:wipe": {
       "settings": {
@@ -289,6 +333,12 @@
           "propertyName": "dryRun",
           "type": "boolean",
           "description": "Do not run actual queries. Instead view the SQL output"
+        },
+        {
+          "name": "compact-output",
+          "propertyName": "compactOutput",
+          "type": "boolean",
+          "description": "A compact single-line output"
         }
       ]
     },
@@ -326,6 +376,12 @@
           "propertyName": "batch",
           "type": "number",
           "description": "Define custom batch number for rollback. Use 0 to rollback to initial state"
+        },
+        {
+          "name": "compact-output",
+          "propertyName": "compactOutput",
+          "type": "boolean",
+          "description": "A compact single-line output"
         }
       ]
     },
