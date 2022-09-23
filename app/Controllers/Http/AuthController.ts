@@ -75,6 +75,7 @@ export default class AuthController {
     let hostDomain = Utils.getHost(ctx, true)
     let jwtSecret = Env.get('JWT_SECRET')
 
+    let refreshTokenString: string = ''
     if (Utils.isExternal(ctx)) {
       // Check the domain exists and is configured
       const domain = await Domain.query().where('public_id', publicId).firstOrFail()
@@ -92,6 +93,9 @@ export default class AuthController {
 
       const refreshToken = await RefreshTokenService.generateToken()
       await domainUser.related('refreshTokens').create(refreshToken)
+
+      refreshTokenString = refreshToken.token
+
       ctx.response.append(
         'set-cookie',
         RefreshTokenService.getCookie(refreshToken.token, hostDomain)
@@ -106,7 +110,7 @@ export default class AuthController {
 
     LnurlService.removeHash(LnurlService.createHash(k1))
 
-    return { pubkey: decoded.pubKey }
+    return { pubkey: decoded.pubKey, jwt, refreshToken: refreshTokenString }
   }
 
   public async sseLnurl(ctx: HttpContextContract) {

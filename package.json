@@ -80,7 +80,7 @@
     "@element-plus/icons-vue": "^2.0.9",
     "@inertiajs/inertia": "^0.11.0",
     "@inertiajs/inertia-vue3": "^0.6.0",
-    "@zerologin/elements": "^0.0.3-beta",
+    "@zerologin/elements": "^0.0.4-beta",
     "core-js": "^3.25.2",
     "element-plus": "^2.2.17",
     "jose": "^4.9.3",
