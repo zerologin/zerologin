@@ -1,8 +1,10 @@
 <template>
   <el-container>
-    <el-header class="header">
-      <Header :auth="auth" />
-    </el-header>
+    <el-affix>
+      <el-header class="header">
+        <Header :auth="auth" />
+      </el-header>
+    </el-affix>
     <el-main>
       <div class="main-container">
         <slot />
@@ -26,6 +28,9 @@ const { auth } = defineProps({ auth: Object })
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid black;
+  background-image: radial-gradient(transparent 1px, #fff 1px);
+  background-size: 4px 4px;
+  backdrop-filter: saturate(50%) blur(4px);
 }
 .footer {
   display: flex;

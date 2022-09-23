@@ -1,6 +1,10 @@
 const { join } = require('path')
 const Encore = require('@symfony/webpack-encore')
 const dotenv = require('dotenv')
+const AutoImport = require('unplugin-auto-import/webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+const ElementPlus = require('unplugin-element-plus/webpack')
 
 /*
 |--------------------------------------------------------------------------
@@ -163,7 +167,9 @@ Encore.configureDevServerOptions((options) => {
 | favorite CSS precompiler
 |
 */
-Encore.enableSassLoader()
+Encore.enableSassLoader(options => {
+  options.additionalData = '@use "~/resources/css/element.scss" as *;'
+})
 // Encore.enableLessLoader()
 // Encore.enableStylusLoader()
 
@@ -178,6 +184,22 @@ Encore.enableSassLoader()
 */
 // Encore.enablePostCssLoader()
 // Encore.configureCssLoader(() => {})
+
+Encore.addPlugin(
+  AutoImport({
+    resolvers: [ElementPlusResolver()],
+  })
+)
+Encore.addPlugin(
+  Components({
+    resolvers: [ElementPlusResolver()],
+  })
+)
+Encore.addPlugin(
+  ElementPlus({
+    useSource: true,
+  })
+)
 
 /*
 |--------------------------------------------------------------------------
