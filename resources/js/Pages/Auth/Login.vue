@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin: auto; width: 350px;">
     <zerologin-auth :url="appUrl" @success="success" @error="error"></zerologin-auth>
   </div>
 </template>
@@ -10,7 +10,7 @@ import { ElNotification } from 'element-plus'
 const { appUrl } = defineProps({ appUrl: String })
 
 const success = (s) => {
-  location.href = "/account";
+  location.href = '/account'
 }
 
 const error = (err) => {
