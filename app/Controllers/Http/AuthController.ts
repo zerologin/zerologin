@@ -24,11 +24,12 @@ export default class AuthController {
 
       let appUrl = Env.get('APP_URL')
       let callbackRouteName = 'callback_internal'
+      const { publicId } = ctx.request.qs()
+
       if (Utils.isExternal(ctx)) {
-        const externalUrl = Utils.getHost(ctx, true)
         // Check the domain exists and is configured
-        await Domain.query().where('zerologin_url', Utils.removeProtocol(externalUrl)).firstOrFail()
-        appUrl = externalUrl
+        const domain = await Domain.query().where('public_id', publicId).firstOrFail()
+        appUrl = ctx.request.protocol() + '://' + domain.zerologinUrl
         callbackRouteName = 'callback'
       } else {
         let user = await User.query().where('pub_key', key).first()
@@ -36,8 +37,6 @@ export default class AuthController {
           await User.create({ pubKey: key })
         }
       }
-
-      const { publicId } = ctx.request.qs()
 
       let callbackRoute = Route.makeSignedUrl(
         callbackRouteName,
