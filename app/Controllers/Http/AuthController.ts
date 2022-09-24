@@ -152,7 +152,13 @@ export default class AuthController {
   public async logout(ctx: HttpContextContract) {
     let hostDomain = Utils.getHost(ctx, true)
     const domain = Utils.removeProtocol(hostDomain).split(':')[0]
+    
     ctx.response.append('set-cookie', `jwt=; Max-Age=0; Domain=${domain}; Path=/; HttpOnly; Secure`)
-    ctx.response.redirect('/')
+
+    if (!Utils.isExternal(ctx)) {
+      ctx.response.redirect('/')
+    } else {
+      return true
+    }
   }
 }

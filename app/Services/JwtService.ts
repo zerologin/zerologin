@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Env from '@ioc:Adonis/Core/Env'
 import * as jose from 'jose'
 import JwtPayload from 'Contracts/jwtPayload'
 import { string } from '@ioc:Adonis/Core/Helpers'
@@ -34,8 +33,8 @@ class JwtService {
       .sign(Buffer.from(secret, 'utf-8'))
   }
 
-  public async verify(jwt: string): Promise<JwtPayload> {
-    const { payload } = await jose.jwtVerify(jwt, Buffer.from(Env.get('JWT_SECRET')), {
+  public async verify(jwt: string, secret: string): Promise<JwtPayload> {
+    const { payload } = await jose.jwtVerify(jwt, Buffer.from(secret), {
       algorithms: ['HS256'],
       //TODO: Make more verification. Issuer, Audience, etc
     })
