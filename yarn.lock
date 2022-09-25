@@ -2440,10 +2440,10 @@
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zerologin/elements@^0.0.6-beta":
-  version "0.0.6-beta"
-  resolved "https://registry.yarnpkg.com/@zerologin/elements/-/elements-0.0.6-beta.tgz#d400c8ee6d302d5445760762ef00fcc9e8d09320"
-  integrity sha512-JKp4z/V1ay9jtNH2chsyagI5nUn2NmEcW9prJASLZRsBPLxOdTfqed2HBplQsZ6XuKhTU2xyp4Cd4/NMi4Ayrg==
+"@zerologin/elements@^0.0.7-beta":
+  version "0.0.7-beta"
+  resolved "https://registry.yarnpkg.com/@zerologin/elements/-/elements-0.0.7-beta.tgz#c761c040c1819e389a4354e2b65193fcbe7e6b09"
+  integrity sha512-kd7EQiMvTB63FHhcNwB42be7uzIzs4AHkw8FDwRA+kwBAYfAaH6Id6nVEzXEHmpZl/cvlh8X7SKOkMGT+sGXNA==
   dependencies:
     awesome-qr "^2.1.5-rc.0"
     ky "^0.31.3"
