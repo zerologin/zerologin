@@ -16,8 +16,9 @@ export default class Jwt {
     try {
       let secret = Env.get('JWT_SECRET')
 
-      const host = Utils.getHost(ctx, false)
-      const externalDomain = await Domain.query().where('root_url', host).first()
+      const host = Utils.getHost(ctx, true)
+      const rootDomain = Utils.getRootDomain(host)
+      const externalDomain = await Domain.query().where('root_url', rootDomain).first()
       if (externalDomain) {
         const decryptedJwtSecret: string | null = Encryption.decrypt(externalDomain.jwtSecret)
         if (decryptedJwtSecret) {
