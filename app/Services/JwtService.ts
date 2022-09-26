@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import * as jose from 'jose'
 import JwtPayload from 'Contracts/jwtPayload'
 import { string } from '@ioc:Adonis/Core/Helpers'
+import Utils from 'App/Utils'
 
 class JwtService {
   private static maxAge = '2h'
@@ -12,16 +13,17 @@ class JwtService {
     return string.toMs(JwtService.maxAge) / 1000
   }
 
-  public getFromCookie(ctx: HttpContextContract) {
-    const cookie = ctx.request.request.headers.cookie?.split('; ').find((c) => c.startsWith('jwt='))
+  public getFromCookie(ctx: HttpContextContract, cookieName: string = 'jwt') {
+    const cookie = ctx.request.request.headers.cookie?.split('; ').find((c) => c.startsWith(`${cookieName}=`))
     if (cookie) {
       return cookie.split('=')[1]
     }
     return null
   }
 
-  public getCookie(token: string, domain: string) {
-    return `jwt=${token}; Max-Age=${this.getMaxAgeSeconds()}; Domain=${domain}; Path=/; HttpOnly; Secure`
+  public getCookie(token: string, domain: string, cookieName: string = 'jwt', age: number = this.getMaxAgeSeconds()) {
+    const clearedDomain = Utils.removeProtocol(domain).split(':')[0]
+    return `${cookieName}=${token}; Max-Age=${age}; Domain=${clearedDomain}; Path=/; HttpOnly; Secure`
   }
 
   public async generateToken(pubKey: string, secret: string) {

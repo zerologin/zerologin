@@ -72,44 +72,53 @@ export default class AuthController {
     const { k1, key, publicId } = ctx.request.params()
 
     let hostDomain = Utils.getHost(ctx, true)
-    let jwtSecret = Env.get('JWT_SECRET')
 
-    let refreshTokenString: string = ''
+    const result = { pubkey: '', jwt: '', refreshToken: '' }
+
     if (Utils.isExternal(ctx)) {
       // Check the domain exists and is configured
       const domain = await Domain.query().where('public_id', publicId).firstOrFail()
       const decryptedJwtSecret: string | null = Encryption.decrypt(domain.jwtSecret)
-      if (decryptedJwtSecret) {
-        jwtSecret = decryptedJwtSecret
-      } else {
+      if (!decryptedJwtSecret) {
         return ctx.response.unprocessableEntity()
       }
-      hostDomain = ctx.request.protocol() + '://' + domain.rootUrl
 
+      // Creating JWT
+      const jwt = await JwtService.generateToken(key, decryptedJwtSecret)
+
+      // Creating Refresh token
       const domainUser = await domain.related('domainUsers').firstOrCreate({
         pubKey: key,
       })
-
       const refreshToken = await RefreshTokenService.generateToken()
       await domainUser.related('refreshTokens').create(refreshToken)
 
-      refreshTokenString = refreshToken.token
+      result.jwt = jwt
+      result.pubkey = key
+      result.refreshToken = refreshToken.token
 
-      ctx.response.append(
-        'set-cookie',
-        RefreshTokenService.getCookie(refreshToken.token, hostDomain)
-      )
+      if (domain.issueCookies) {
+        hostDomain = ctx.request.protocol() + '://' + domain.rootUrl
+
+        // Refresh token
+        ctx.response.append(
+          'set-cookie',
+          RefreshTokenService.getCookie(refreshToken.token, hostDomain, domain.refreshTokenName)
+        )
+
+        // JWT token
+        ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain, domain.tokenName))
+      }
+    } else {
+      const jwt = await JwtService.generateToken(key, Env.get('JWT_SECRET'))
+      ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain))
+      result.jwt = jwt
+      result.pubkey = key
     }
-
-    const jwt = await JwtService.generateToken(key, jwtSecret)
-    const decoded = JwtService.decode(jwt)
-
-    const domain = Utils.removeProtocol(hostDomain).split(':')[0]
-    ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain))
 
     LnurlService.removeHash(LnurlService.createHash(k1))
 
-    return { pubkey: decoded.pubKey, jwt, refreshToken: refreshTokenString }
+    return result
   }
 
   public async sseLnurl(ctx: HttpContextContract) {
@@ -150,15 +159,21 @@ export default class AuthController {
   }
 
   public async logout(ctx: HttpContextContract) {
-    let hostDomain = Utils.getRootDomain(Utils.getHost(ctx, true))
-    const domain = Utils.removeProtocol(hostDomain).split(':')[0]
-    
-    ctx.response.append('set-cookie', `jwt=; Max-Age=0; Domain=${domain}; Path=/; HttpOnly; Secure`)
+    const host = Utils.getHost(ctx, false)
 
-    if (!Utils.isExternal(ctx)) {
-      ctx.response.redirect('/')
-    } else {
+    if (Utils.isExternal(ctx)) {
+      const domain = await Domain.query().where('root_url', host).first()
+      if (!domain) {
+        return ctx.response.unauthorized('You are not authorized to perform this action')
+      }
+      ctx.response.append('set-cookie', JwtService.getCookie('', domain.rootUrl.split(':')[0], domain.tokenName, 0))
       return true
+    }
+    else {
+      let hostDomain = Utils.getRootDomain(host)
+      const domain = hostDomain.split(':')[0]
+      ctx.response.append('set-cookie', JwtService.getCookie('', domain, 'jwt', 0))
+      ctx.response.redirect('/')
     }
   }
 }

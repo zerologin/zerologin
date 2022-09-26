@@ -2,9 +2,7 @@
   <div>
     <el-alert title="Information" type="info" show-icon :closable="false">
       For more informations about adding a domain on Zerologin, please
-      <a href="https://docs.zerologin.co/how-to-use-zerologin.html\" target="_blank">
-        read the documentation
-      </a>
+      <a href="https://docs.zerologin.co/" target="_blank"> read the documentation </a>
     </el-alert>
 
     <h1>Add domain</h1>
@@ -23,6 +21,15 @@
       </el-form-item>
       <el-form-item label="Secret: will be used for JWT encryption" prop="secret">
         <el-input type="password" v-model="ruleForm.secret" show-password />
+      </el-form-item>
+      <el-form-item label="Issue cookies to client" prop="issueCookies">
+        <el-switch v-model="ruleForm.issueCookies" />
+      </el-form-item>
+      <el-form-item label="Token name" prop="tokenName">
+        <el-input v-model="ruleForm.tokenName" />
+      </el-form-item>
+      <el-form-item label="Refresh token name" prop="refreshTokenName">
+        <el-input v-model="ruleForm.refreshTokenName" />
       </el-form-item>
       <el-form-item>
         <div style="width: 100%; display: flex; justify-content: flex-end; gap: 10px">
@@ -53,12 +60,24 @@ const ruleForm = reactive({
   rootUrl: props.domain?.root_url ?? '',
   zerologinUrl: props.domain?.zerologin_url ?? '',
   secret: props.domain?.jwt_secret ?? '',
+  issueCookies: props.domain?.issue_cookies ?? true,
+  tokenName: props.domain?.token_name ?? 'jwt',
+  refreshTokenName: props.domain?.refresh_token_name ?? 'refresh_token',
 })
+
+const checkIssueCookies = (rule, value, callback) => {
+  if (ruleForm.issueCookies && value === '') {
+    callback(new Error('Required if "Issue cookies" is checked'))
+  }
+  callback()
+}
 
 const rules = reactive({
   rootUrl: [{ required: true, message: 'Root URL is required', trigger: 'blur' }],
   zerologinUrl: [{ required: true, message: 'Zerologin URL is required', trigger: 'blur' }],
   secret: [{ required: true, message: 'Secret is required', trigger: 'blur' }],
+  tokenName: [{ validator: checkIssueCookies, trigger: 'blur' }],
+  refreshTokenName: [{ validator: checkIssueCookies, trigger: 'blur' }],
 })
 
 const submitForm = async (formEl) => {

@@ -24,9 +24,9 @@ class RefreshTokenService {
     return null
   }
 
-  public getCookie(token: string, domain: string) {
+  public getCookie(token: string, domain: string, cookieName: string) {
     const clearedDomain = Utils.removeProtocol(domain).split(':')[0]
-    return `refresh_token=${token}; Max-Age=${this.getMaxAgeSeconds()}; Domain=${clearedDomain}; Path=/; HttpOnly; Secure`
+    return `${cookieName}=${token}; Max-Age=${this.getMaxAgeSeconds()}; Domain=${clearedDomain}; Path=/; HttpOnly; Secure`
   }
 
   public async generateToken(): Promise<RefreshToken> {

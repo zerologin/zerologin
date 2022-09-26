@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 class Utils {
   public isExternal({ request }: HttpContextContract) {
-    return !request.parsedUrl.path?.includes('api/internal')
+    return request.parsedUrl.path?.includes('api/v1')
   }
 
   public getHost({ request }: HttpContextContract, protocol: boolean = false) {

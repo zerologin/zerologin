@@ -37,12 +37,10 @@ export default class RefreshTokensController {
 
     const jwt = await JwtService.generateToken(domainUser.pubKey, secret)
 
-    const rootUrl = Utils.removeProtocol(domain.rootUrl).split(':')[0]
-
-    ctx.response.append('set-cookie', JwtService.getCookie(jwt, rootUrl))
+    ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain.rootUrl, domain.tokenName))
     ctx.response.append(
       'set-cookie',
-      RefreshTokenService.getCookie(newRefreshToken.token, rootUrl)
+      RefreshTokenService.getCookie(newRefreshToken.token, domain.rootUrl, domain.refreshTokenName)
     )
     ctx.response.ok('refresh ok')
   }

@@ -20,6 +20,15 @@ export default class Domain extends BaseModel {
   public zerologinUrl: string
 
   @column()
+  public issueCookies: boolean
+
+  @column()
+  public tokenName: string
+
+  @column()
+  public refreshTokenName: string
+
+  @column()
   public userId: string
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
