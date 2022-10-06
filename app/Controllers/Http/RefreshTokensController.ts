@@ -4,7 +4,6 @@ import JwtService from 'App/Services/JwtService'
 import RefreshTokenService from 'App/Services/RefreshTokenService'
 import { DateTime } from 'luxon'
 import Encryption from '@ioc:Adonis/Core/Encryption'
-import Utils from 'App/Utils'
 
 export default class RefreshTokensController {
   public async refresh(ctx: HttpContextContract) {
