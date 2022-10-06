@@ -28,7 +28,7 @@ services:
         environment:
             PORT: 3333
             HOST: 0.0.0.0
-            APP_URL: localhost
+            APP_URL: http://localhost:3333
             NODE_ENV: development
             APP_KEY: vhQsDNQLKFN922MF6rxpQDelwrTrR3fL
             DRIVE_DISK: local
