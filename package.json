@@ -92,6 +92,5 @@
     "regenerator-runtime": "^0.13.9",
     "pino-pretty": "^9.1.0",
     "source-map-support": "^0.5.21"
-    
   }
 }
