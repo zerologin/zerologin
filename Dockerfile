@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 RUN yarn install
-RUN yarn build
+RUN yarn build-stateless
 WORKDIR /usr/src/app/build
 RUN yarn install --production
 RUN node-prune
@@ -26,7 +26,8 @@ WORKDIR /usr/src/app
 
 # copy from build image
 COPY --from=BUILD_IMAGE /usr/src/app/build ./build
+COPY --from=BUILD_IMAGE /usr/src/app/docker-startup.sh ./build
 
 EXPOSE 3333
 
-CMD [ "node", "./build/server.js" ]
+CMD [ "/bin/sh", "build/docker-startup.sh" ]
