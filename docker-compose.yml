@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+    postgres:
+        image: postgres:14.5-alpine
+        hostname: postgres.instance
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: root
+            POSTGRES_DB: zerologin
+        ports:
+            - 5432:5432
+        volumes:
+            - postgres:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "sh -c 'pg_isready -U root -d zerologin'"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 10s 
+    # pgadmin:
+    #     image: dpage/pgadmin4
+    #     environment:
+    #         PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+    #         PGADMIN_DEFAULT_PASSWORD: password
+    #         PGADMIN_LISTEN_PORT: 80
+    #     ports:
+    #         - 15432:80
+    #     volumes:
+    #         - pgadmin:/var/lib/pgadmin
+    #     depends_on:
+    #         - postgres
+    zerologin:
+        image: zerologin:7
+        environment:
+            PORT: 3333
+            HOST: 0.0.0.0
+            APP_URL: http://localhost:3333
+            NODE_ENV: development
+            APP_KEY: {key}
+            DRIVE_DISK: local
+            SESSION_DRIVER: cookie
+            CACHE_VIEWS: "false"
+            DB_CONNECTION: pg
+            PG_HOST: postgres.instance
+            PG_PORT: 5432
+            PG_USER: root
+            PG_PASSWORD: postgres
+            PG_DB_NAME: zerologin
+            JWT_SECRET: {secret}
+        ports:
+            - 3333:3333
+        depends_on: 
+            postgres:
+                condition: service_healthy
+volumes:
+    postgres:
+    pgadmin:

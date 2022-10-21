@@ -6,6 +6,7 @@
     "dev": "node ace serve --watch --encore-args=\"--port 8081\"",
     "build": "node ace build --production",
     "postbuild": "npm run env && npm run migrate",
+    "build-stateless": "node ace build --production",
     "env": "cp .env build/",
     "migrate": "node ace migration:run --force",
     "start": "node server.js",
@@ -53,7 +54,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-adonis": "^2.1.1",
     "eslint-plugin-prettier": "^4.2.1",
-    "pino-pretty": "^9.1.0",
     "prettier": "^2.7.1",
     "sass": "^1.55.0",
     "sass-loader": "^13.0.2",
@@ -91,6 +91,7 @@
     "qrcode": "^1.5.1",
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "^0.13.9",
+    "pino-pretty": "^9.1.0",
     "source-map-support": "^0.5.21"
   }
 }
