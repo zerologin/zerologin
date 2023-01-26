@@ -137,14 +137,17 @@ export default class AuthController {
     let domain = host
     let urlSuffix = '/api/internal'
 
+    let useKeyauth = false
+
     const { publicId } = ctx.request.qs()
     if (Utils.isExternal(ctx)) {
       const externalDomain = await Domain.query().where('public_id', publicId).firstOrFail()
       domain = ctx.request.protocol() + '://' + externalDomain.zerologinUrl
       urlSuffix = '/api/v1'
+      useKeyauth = externalDomain.isKeyauth
     }
 
-    const lnurlChallenge = LnurlService.generateNewUrl(domain + urlSuffix, publicId)
+    const lnurlChallenge = LnurlService.generateNewUrl(domain + urlSuffix, publicId, useKeyauth)
 
     response.response.write(
       `data: ${JSON.stringify({ message: 'challenge', rootDomain, ...lnurlChallenge })}\n\n`

@@ -31,6 +31,7 @@ export default class DomainValidator {
       rules.trim(),
       rules.escape(),
     ]),
+    isKeyauth: schema.boolean(),
   })
 
   public messages = {

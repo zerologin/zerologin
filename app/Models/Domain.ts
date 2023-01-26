@@ -29,6 +29,9 @@ export default class Domain extends BaseModel {
   public refreshTokenName: string
 
   @column()
+  public isKeyauth: boolean
+
+  @column()
   public userId: string
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>

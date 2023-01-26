@@ -31,6 +31,19 @@
       <el-form-item label="Refresh token name" prop="refreshTokenName">
         <el-input v-model="ruleForm.refreshTokenName" />
       </el-form-item>
+
+      <el-space fill>
+        <el-alert type="info" show-icon :closable="false">
+          <p>
+            <a href="https://github.com/lnurl/luds/blob/luds/17.md" target="_blank">Read more</a>
+            about keyauth://
+          </p>
+        </el-alert>
+        <el-form-item label="Use keyauth://" prop="isKeyauth">
+          <el-switch v-model="ruleForm.isKeyauth" />
+        </el-form-item>
+      </el-space>
+
       <el-form-item>
         <div style="width: 100%; display: flex; justify-content: flex-end; gap: 10px">
           <Link href="/account" style="text-decoration: none">
@@ -63,6 +76,7 @@ const ruleForm = reactive({
   issueCookies: props.domain?.issue_cookies ?? true,
   tokenName: props.domain?.token_name ?? 'jwt',
   refreshTokenName: props.domain?.refresh_token_name ?? 'refresh_token',
+  isKeyauth: props.domain?.is_keyauth ?? true,
 })
 
 const checkIssueCookies = (rule, value, callback) => {

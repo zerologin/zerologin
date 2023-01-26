@@ -87,7 +87,7 @@
       <h2>Demo</h2>
       <p>
         A demo website is
-        <a href="http://dolu.dev" target="_blank" rel="noopener noreferrer">available here</a>
+        <a href="https://demo.zerologin.co" target="_blank" rel="noopener noreferrer">available here</a>
       </p>
     </div>
   </div>
