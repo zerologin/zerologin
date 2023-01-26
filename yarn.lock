@@ -2449,6 +2449,13 @@
     ky "^0.31.3"
     vue "^3.2.37"
 
+"@zerologin/lnurl@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@zerologin/lnurl/-/lnurl-0.1.2.tgz#f4747d8f103301a6018f2692df0a845274d0016b"
+  integrity sha512-HIq+1NiVCW5jSxWWea1WNVo7fSyJJ+lb/rX6Vf/UIbdWvxxWaTrUP5t2cZWCXV+VP1QQ7sGRK31EYSS2pVb6lQ==
+  dependencies:
+    bech32 "^2.0.0"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"

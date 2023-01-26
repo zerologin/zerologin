@@ -1,6 +1,8 @@
 import lnurl from 'lnurl'
 import crypto from 'crypto'
+import * as zlnurl from '@zerologin/lnurl'
 // TODO Use @zerologin/lnurl instead of lnurl
+
 class LnurlAuth {
   private _usedHashes: string[] = []
 
@@ -35,7 +37,7 @@ class LnurlAuth {
     this._usedHashes = this._usedHashes.filter((h) => h !== hash)
   }
 
-  public generateNewUrl(hostname: string, publicId?: string) {
+  public generateNewUrl(hostname: string, publicId?: string, keyauth: boolean = false) {
     const secret = this.generateSecret()
     this.addHash(this.createHash(secret))
     const url = new URL(hostname + '/lnurl')
@@ -46,12 +48,13 @@ class LnurlAuth {
     if (publicId) {
       url.searchParams.append('publicId', publicId)
     }
-    
+
     const urlString = url.toString()
+    const encoded = zlnurl.encode(urlString, keyauth)
 
     return {
       url: urlString,
-      encoded: lnurl.encode(urlString).toUpperCase(),
+      encoded: keyauth ? encoded : encoded.toUpperCase(),
       secret,
     }
   }

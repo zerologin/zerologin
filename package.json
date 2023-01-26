@@ -80,6 +80,7 @@
     "@inertiajs/inertia": "^0.11.0",
     "@inertiajs/inertia-vue3": "^0.6.0",
     "@zerologin/elements": "^0.0.8-beta",
+    "@zerologin/lnurl": "^0.1.2",
     "core-js": "^3.25.2",
     "element-plus": "^2.2.17",
     "jose": "^4.9.3",
@@ -87,11 +88,11 @@
     "lnurl": "^0.24.2",
     "luxon": "^3.0.3",
     "pg": "^8.8.0",
+    "pino-pretty": "^9.1.0",
     "proxy-addr": "^2.0.7",
     "qrcode": "^1.5.1",
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "^0.13.9",
-    "pino-pretty": "^9.1.0",
     "source-map-support": "^0.5.21"
   }
 }

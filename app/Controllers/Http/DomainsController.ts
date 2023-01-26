@@ -9,7 +9,7 @@ export default class DomainsController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const { zerologinUrl, rootUrl, secret, issueCookies, tokenName, refreshTokenName } = await request.validate(DomainValidator)
+    const { zerologinUrl, rootUrl, secret, issueCookies, tokenName, refreshTokenName, isKeyauth } = await request.validate(DomainValidator)
 
     let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
     let parsedRootUrl = Utils.getRootDomain(rootUrl)
@@ -21,7 +21,8 @@ export default class DomainsController {
       jwtSecret: encryptedSecret,
       issueCookies,
       tokenName,
-      refreshTokenName
+      refreshTokenName,
+      isKeyauth
     })
     response.redirect().toRoute('account_index')
   }
@@ -35,7 +36,7 @@ export default class DomainsController {
   }
 
   public async update({ request, response }: HttpContextContract) {
-    const { zerologinUrl, rootUrl, secret, issueCookies, tokenName, refreshTokenName } = await request.validate(DomainValidator)
+    const { zerologinUrl, rootUrl, secret, issueCookies, tokenName, refreshTokenName, isKeyauth } = await request.validate(DomainValidator)
 
     const { id } = request.params()
     const domain = await request.user.related('domains').query().where('id', id).firstOrFail()
@@ -51,6 +52,7 @@ export default class DomainsController {
       issueCookies,
       tokenName: tokenName ?? '',
       refreshTokenName: refreshTokenName ?? '',
+      isKeyauth
     })
     await domain.save()
     response.redirect().toRoute('account_index')
