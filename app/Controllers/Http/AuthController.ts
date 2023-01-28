@@ -165,17 +165,22 @@ export default class AuthController {
   }
 
   public async logout(ctx: HttpContextContract) {
-    const host = Utils.getHost(ctx, false)
-
     if (Utils.isExternal(ctx)) {
-      const domain = await Domain.query().where('root_url', host).first()
-      if (!domain) {
-        return ctx.response.unauthorized('You are not authorized to perform this action')
+      const publicIdCookie = JwtService.getFromCookie(ctx, Utils.publicIdCookieName)
+      if (!publicIdCookie) {
+        return ctx.response.unauthorized("You don't have the permission to access this page")
       }
-      ctx.response.append('set-cookie', JwtService.getCookie('', domain.rootUrl.split(':')[0], domain.tokenName, 0))
+
+      const externalDomain = await Domain.query().where('public_id', publicIdCookie).first()
+      if (!externalDomain) {
+        return ctx.response.unauthorized("Cannot find the domain configuration associated with this request")
+      }
+
+      ctx.response.append('set-cookie', JwtService.getCookie('', externalDomain.rootUrl.split(':')[0], externalDomain.tokenName, 0))
       return true
     }
     else {
+      const host = Utils.getHost(ctx, false)
       let hostDomain = Utils.getRootDomain(host)
       const domain = hostDomain.split(':')[0]
       ctx.response.append('set-cookie', JwtService.getCookie('', domain, 'jwt', 0))
