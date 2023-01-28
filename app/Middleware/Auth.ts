@@ -11,11 +11,14 @@ export default class Jwt {
     try {
 
       if (Utils.isExternal(ctx)) {
-        const host = Utils.getHost(ctx, false)
-        const externalDomain = await Domain.query().where('root_url', host).first()
+        const publicIdCookie = JwtService.getFromCookie(ctx, Utils.publicIdCookieName)
+        if (!publicIdCookie) {
+          return ctx.response.unauthorized("You don't have the permission to access this page")
+        }
 
+        const externalDomain = await Domain.query().where('public_id', publicIdCookie).first()
         if (!externalDomain) {
-          return ctx.response.badRequest("Can't verify your credentials")
+          return ctx.response.unauthorized("Cannot find the domain configuration associated with this request")
         }
 
         const jwtCookie = JwtService.getFromCookie(ctx, externalDomain.tokenName)

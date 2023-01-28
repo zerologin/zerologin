@@ -1,6 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 class Utils {
+  public publicIdCookieName = 'zerologin_public_id'
+
   public isExternal({ request }: HttpContextContract) {
     return request.parsedUrl.path?.includes('api/v1')
   }
@@ -13,7 +15,7 @@ class Utils {
       }
       return this.removeProtocol(host)
     }
-    
+
     if (protocol) {
       return request.protocol() + '://' + request.host()
     }

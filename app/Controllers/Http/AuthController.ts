@@ -97,9 +97,8 @@ export default class AuthController {
       result.pubkey = key
       result.refreshToken = refreshToken.token
 
+      hostDomain = ctx.request.protocol() + '://' + domain.rootUrl
       if (domain.issueCookies) {
-        hostDomain = ctx.request.protocol() + '://' + domain.rootUrl
-
         // Refresh token
         ctx.response.append(
           'set-cookie',
@@ -109,6 +108,10 @@ export default class AuthController {
         // JWT token
         ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain, domain.tokenName))
       }
+
+      // Add public id to cookied to be able to identify the domain later
+      ctx.response.append('set-cookie', JwtService.getCookie(publicId, hostDomain, Utils.publicIdCookieName))
+
     } else {
       const jwt = await JwtService.generateToken(key, Env.get('JWT_SECRET'))
       ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain))
