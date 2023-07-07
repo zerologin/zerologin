@@ -13,7 +13,7 @@ const ElementPlus = require('unplugin-element-plus/webpack')
 */
 
 Encore.configureDefinePlugin((options) => {
-  const appUrl = process.env.APP_URL || dotenv.config().parsed.APP_URL || 'http://localhost:3333'
+  const appUrl = process.env.APP_URL || dotenv.config().parsed?.APP_URL || 'http://localhost:3333'
   options.APP_URL = JSON.stringify(appUrl)
 })
 
