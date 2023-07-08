@@ -34,7 +34,7 @@ export default class RefreshTokensController {
       return ctx.response.unprocessableEntity()
     }
 
-    const jwt = await JwtService.generateToken(domainUser.pubKey, secret)
+    const jwt = await JwtService.generateToken({ pubKey: domainUser.pubKey }, secret)
 
     ctx.response.append('set-cookie', JwtService.getCookie(jwt, domain.rootUrl, domain.tokenName))
     ctx.response.append(
