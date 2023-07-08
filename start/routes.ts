@@ -39,6 +39,13 @@ Route.group(() => {
 }).prefix('api/v1')
 
 Route.group(() => {
+  Route.group(() => {
+    Route.get('', 'SigauthController.index')
+    Route.get('verify', 'SigauthController.verify')
+  }).prefix('sigauth')
+}).prefix('api/v2')
+
+Route.group(() => {
   Route.get('/', 'AccountsController.index').as('account_index')
 })
   .prefix('account')
@@ -55,3 +62,16 @@ Route.group(() => {
 })
   .prefix('domains')
   .middleware('auth')
+
+Route.group(() => {
+  Route.get('/create', 'SigauthDomainsController.create')
+  Route.post('/', 'SigauthDomainsController.store')
+
+  Route.get(':id', 'SigauthDomainsController.edit')
+  Route.put(':id', 'SigauthDomainsController.update')
+
+  Route.delete('/:id', 'SigauthDomainsController.delete')
+})
+  .prefix('sigauth-domains')
+  .middleware('auth')
+

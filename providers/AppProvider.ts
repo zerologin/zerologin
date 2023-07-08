@@ -1,7 +1,7 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 export default class AppProvider {
-  constructor(protected app: ApplicationContract) {}
+  constructor(protected app: ApplicationContract) { }
 
   public register() {
     // Register your own bindings
@@ -13,6 +13,9 @@ export default class AppProvider {
 
   public async ready() {
     // App is ready
+    if (this.app.environment === 'web') {
+      await import('../start/websocket')
+    }
   }
 
   public async shutdown() {

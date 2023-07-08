@@ -42,6 +42,27 @@ class Utils {
     }
     throw new Error(`Cannot get root domain for "${url}"`)
   }
+
+  // Check url params protocol, http:// or https:// or ws:// or wss:// and switch to the given protocol (http => ws, https => wss)
+  public switchProtocol(url: string, protocol: Protocols = Protocols.http) {
+    if (url.includes('://')) {
+      const urlProtocol = url.split('://')[0]
+      if (urlProtocol.includes(Protocols.http)) {
+        url = url.replace(Protocols.http, protocol)
+      } else if (urlProtocol.includes(Protocols.ws)) {
+        url = url.replace(Protocols.ws, protocol)
+      }
+    }
+    else {
+      url = protocol + '://' + url
+    }
+    return url
+  }
+}
+
+export enum Protocols {
+  http = 'http',
+  ws = 'ws',
 }
 
 export default new Utils()

@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Domain from 'App/Models/Domain'
+import SigauthDomain from 'App/Models/SigauthDomain'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -17,4 +18,7 @@ export default class User extends BaseModel {
 
   @hasMany(() => Domain)
   public domains: HasMany<typeof Domain>
+
+  @hasMany(() => SigauthDomain)
+  public sigauthDomains: HasMany<typeof SigauthDomain>
 }

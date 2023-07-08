@@ -1,6 +1,5 @@
 const { join } = require('path')
 const Encore = require('@symfony/webpack-encore')
-const dotenv = require('dotenv')
 const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
@@ -12,10 +11,11 @@ const ElementPlus = require('unplugin-element-plus/webpack')
 |--------------------------------------------------------------------------
 */
 
-Encore.configureDefinePlugin((options) => {
-  const appUrl = process.env.APP_URL || dotenv.config().parsed?.APP_URL || 'http://localhost:3333'
-  options.APP_URL = JSON.stringify(appUrl)
-})
+// Useless now?
+// Encore.configureDefinePlugin((options) => {
+//   const appUrl = process.env.APP_URL || dotenv.config().parsed?.APP_URL || 'http://localhost:3333'
+//   options.APP_URL = JSON.stringify(appUrl)
+// })
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev')

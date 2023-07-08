@@ -26,8 +26,8 @@ class JwtService {
     return `${cookieName}=${token}; Max-Age=${age}; Domain=${clearedDomain}; Path=/; HttpOnly; Secure`
   }
 
-  public async generateToken(pubKey: string, secret: string) {
-    return await new jose.SignJWT({ pubKey })
+  public async generateToken(payload: JwtPayload, secret: string) {
+    return await new jose.SignJWT(payload)
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime(this.getMaxAgeString())

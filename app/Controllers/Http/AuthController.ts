@@ -84,7 +84,7 @@ export default class AuthController {
       }
 
       // Creating JWT
-      const jwt = await JwtService.generateToken(key, decryptedJwtSecret)
+      const jwt = await JwtService.generateToken({ pubKey: key }, decryptedJwtSecret)
 
       // Creating Refresh token
       const domainUser = await domain.related('domainUsers').firstOrCreate({
@@ -113,7 +113,7 @@ export default class AuthController {
       ctx.response.append('set-cookie', JwtService.getCookie(publicId, hostDomain, Utils.publicIdCookieName))
 
     } else {
-      const jwt = await JwtService.generateToken(key, Env.get('JWT_SECRET'))
+      const jwt = await JwtService.generateToken({ pubKey: key }, Env.get('JWT_SECRET'))
       ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain))
       result.jwt = jwt
       result.pubkey = key
