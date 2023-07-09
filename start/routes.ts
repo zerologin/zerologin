@@ -42,6 +42,7 @@ Route.group(() => {
   Route.group(() => {
     Route.get('', 'SigauthController.index')
     Route.get('verify/:id', 'SigauthController.verify')
+    Route.get('logout', 'SigauthController.logout').middleware('auth')
   }).prefix('sigauth')
 }).prefix('api/v2')
 

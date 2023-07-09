@@ -121,7 +121,9 @@ export default class SigauthController {
       if (sigauthDomain.issueCookies) {
         const hostDomain = Utils.getRootDomain(sigauthDomain.zerologinUrl)
         ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain, sigauthDomain.tokenName))
+        ctx.response.append('set-cookie', JwtService.getCookie(sigauthDomain.id, hostDomain, Utils.publicIdCookieName))
       }
+
       if (redirect && sigauthDomain.transportRedirect && sigauthDomain.redirectUrl) {
         const redirectUrl = new URL(sigauthDomain.redirectUrl)
         redirectUrl.searchParams.append('token', jwt)
@@ -133,5 +135,20 @@ export default class SigauthController {
     else {
       return ctx.response.forbidden({ error: 'Invalid signature' })
     }
+  }
+
+  public async logout(ctx: HttpContextContract) {
+    const publicIdCookie = JwtService.getFromCookie(ctx, Utils.publicIdCookieName)
+    if (!publicIdCookie) {
+      return ctx.response.unauthorized("You don't have the permission to access this page")
+    }
+
+    const sigauthDomain = await SigauthDomain.query().where('public_id', publicIdCookie).first()
+    if (!sigauthDomain) {
+      return ctx.response.unauthorized("Cannot find the domain configuration associated with this request")
+    }
+
+    ctx.response.append('set-cookie', JwtService.getCookie('', Utils.getRootDomain(sigauthDomain.zerologinUrl), sigauthDomain.tokenName, 0))
+    return true
   }
 }
