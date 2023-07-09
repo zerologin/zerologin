@@ -33,10 +33,10 @@ export default class SigauthController {
 
     let appUrl = ctx.request.protocol() + '://' + sigauthDomain.zerologinUrl
 
-    const result = {
+    const authRequest = {
       id: "",
       challenge,
-      callback: appUrl + '/api/v2/sigauth/verify',
+      callback: appUrl + '/api/v2/sigauth/verify/' + sigauthDomain.id,
       origin: Utils.getRootDomain(sigauthDomain.zerologinUrl),
       transports,
       signaling: Utils.switchProtocol(appUrl, Protocols.ws),
@@ -44,87 +44,89 @@ export default class SigauthController {
 
     const challengeId = crypto
       .createHash('sha256')
-      .update(JSON.stringify({ challenge: result.challenge, callback: result.callback, origin: result.origin, transports: result.transports, signaling: result.signaling }))
+      .update(JSON.stringify({ challenge: authRequest.challenge, callback: authRequest.callback, origin: authRequest.origin, transports: authRequest.transports, signaling: authRequest.signaling }))
       .digest('hex');
 
-    result.id = challengeId
+    authRequest.id = challengeId
 
-    const challengeEncoded = base64url.encode(JSON.stringify(result))
+    const authRequestEncoded = base64url.encode(JSON.stringify(authRequest))
 
-    challenges.set(challengeId, challengeEncoded)
+    challenges.set(challengeId, authRequestEncoded)
 
-    return { challengeId, challenge: `sigauth:${challengeEncoded}` }
+    return { challengeId, challenge: `sigauth:${authRequestEncoded}` }
   }
 
   public async verify(ctx: HttpContextContract) {
-    const { token, sig } = ctx.request.all()
-    const challenge = base64url.decode(token)
-    const decodedChallenge = JSON.parse(challenge)
+    const { token, sig, redirect } = ctx.request.all()
+    const { id: domainId } = ctx.request.params()
 
-    const existingChallenge = challenges.get(decodedChallenge.id)
-    if (!existingChallenge) {
-      return 'Challenge not found'
+    const sigauthDomain = await SigauthDomain.query().where('id', domainId).firstOrFail()
+
+    const authRequest = base64url.decode(token)
+    const decodedAuthRequest = JSON.parse(authRequest)
+
+    const existingAuthRequest = challenges.get(decodedAuthRequest.id)
+    if (!existingAuthRequest) {
+      return ctx.response.forbidden({ error: 'Challenge not found' })
     }
-    const decodedExistingChallenge = JSON.parse(base64url.decode(existingChallenge))
+    const decodedExistingAuthRequest = JSON.parse(base64url.decode(existingAuthRequest))
     if (
-      decodedChallenge.id !== decodedExistingChallenge.id ||
-      decodedChallenge.challenge !== decodedExistingChallenge.challenge ||
-      decodedChallenge.callback !== decodedExistingChallenge.callback ||
-      decodedChallenge.origin !== decodedExistingChallenge.origin ||
-      decodedChallenge.transport !== decodedExistingChallenge.transport
+      decodedAuthRequest.id !== decodedExistingAuthRequest.id ||
+      decodedAuthRequest.challenge !== decodedExistingAuthRequest.challenge ||
+      decodedAuthRequest.callback !== decodedExistingAuthRequest.callback ||
+      decodedAuthRequest.origin !== decodedExistingAuthRequest.origin ||
+      decodedAuthRequest.transport !== decodedExistingAuthRequest.transport
     ) {
-      return 'Challenge has been altered.'
+      return ctx.response.forbidden({ error: 'Challenge has been altered' })
     }
 
-    // TODO Verify challenge?
+    const message = Buffer.from(`${decodedAuthRequest.challenge}:${decodedAuthRequest.origin}`, 'utf-8').toString('hex')
+    const sigValid = schnorr.verify(sig, message, decodedAuthRequest.publicKey)
 
-    const sigValid = schnorr.verify(this.toBufferArray(sig), this.toBufferArray(challenge), this.toBufferArray(decodedChallenge.publicKey))
+    let jwt = ''
 
     if (sigValid) {
-      challenges.delete(decodedChallenge.id)
+      challenges.delete(decodedAuthRequest.id)
 
       // Nostr DID
-      if (decodedChallenge.nostr?.relays?.length > 0) {
-        const ndk = new NDK({ explicitRelayUrls: decodedChallenge.nostr?.relays });
+      if (decodedAuthRequest.nostr?.relays?.length > 0) {
+        const ndk = new NDK({ explicitRelayUrls: decodedAuthRequest.nostr?.relays });
         await ndk.connect();
         const user = ndk.getUser({
-          hexpubkey: decodedChallenge.publicKey,
+          hexpubkey: decodedAuthRequest.publicKey,
         });
         await user.fetchProfile();
 
-        const jwt = await JwtService.generateToken({
-          pubKey: decodedChallenge.publicKey,
+        jwt = await JwtService.generateToken({
+          pubKey: decodedAuthRequest.publicKey,
           nostr: {
             npub: user.npub,
             ...user.profile,
           }
         },
           Env.get('JWT_SECRET'))
-
-        const hostDomain = Utils.getHost(ctx, true)
-        ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain))
-
-        return { jwt, pubkey: decodedChallenge.publicKey }
       }
       else {
-        const jwt = await JwtService.generateToken({
-          pubKey: decodedChallenge.publicKey
+        jwt = await JwtService.generateToken({
+          pubKey: decodedAuthRequest.publicKey
         },
           Env.get('JWT_SECRET'))
-
-        const hostDomain = Utils.getHost(ctx, true)
-        ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain))
-
-        return { jwt, pubkey: decodedChallenge.publicKey }
       }
+
+      if (sigauthDomain.issueCookies) {
+        const hostDomain = Utils.getHost(ctx, true)
+        ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain, sigauthDomain.tokenName))
+      }
+      if (redirect && sigauthDomain.transportRedirect && sigauthDomain.redirectUrl) {
+        const redirectUrl = new URL(sigauthDomain.redirectUrl)
+        redirectUrl.searchParams.append('token', jwt)
+        return ctx.response.redirect(redirectUrl.toString())
+      }
+
+      return { jwt, pubkey: decodedAuthRequest.publicKey }
     }
     else {
-      return 'Failed'
+      return ctx.response.forbidden({ error: 'Invalid signature' })
     }
-  }
-
-  // TODO Move to utils
-  private toBufferArray(msg: string) {
-    return Buffer.from(msg, 'hex')
   }
 }

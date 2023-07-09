@@ -27,40 +27,46 @@ WsInstance.ws.on('connection', (socket: CustomWebsocket) => {
     })
 
     socket.on('message', (data) => {
-        const message: { action: string, challengeId: string, icecandidate: string, offer: string, answer: string } = JSON.parse(data.toString())
-        if (message.action === 'join') {
-            if (rooms[message.challengeId]?.length === 2) return;
+        try {
+            const message: { action: string, challengeId: string, icecandidate: string, offer: string, answer: string } = JSON.parse(data.toString())
+            if (message.action === 'join') {
+                if (rooms[message.challengeId]?.length === 2) return;
 
-            if (rooms[message.challengeId]) {
-                rooms[message.challengeId].push(socket)
-            }
-            else {
-                rooms[message.challengeId] = [socket];
-            }
+                if (rooms[message.challengeId]) {
+                    rooms[message.challengeId].push(socket)
+                }
+                else {
+                    rooms[message.challengeId] = [socket];
+                }
 
-            const otherPeer = getOtherPeer(message.challengeId, socket);
-            if (otherPeer) {
-                socket.send("remote-peer:" + otherPeer.id);
-                otherPeer.send("remote-peer:" + socket.id);
+                // Other peer in join is always the Service Provider (Zerologin)
+                const otherPeer = getOtherPeer(message.challengeId, socket);
+                if (otherPeer) {
+                    // socket.send("remote-peer:" + otherPeer.id);
+                    otherPeer.send("remote-peer:" + socket.id);
+                }
             }
-        }
-        else if (message.action === 'offer') {
-            const otherPeer = getOtherPeer(message.challengeId, socket);
-            if (otherPeer) {
-                otherPeer.send("offer:" + message.offer);
+            else if (message.action === 'offer') {
+                const otherPeer = getOtherPeer(message.challengeId, socket);
+                if (otherPeer) {
+                    otherPeer.send("offer:" + message.offer);
+                }
             }
-        }
-        else if (message.action === 'answer') {
-            const otherPeer = getOtherPeer(message.challengeId, socket);
-            if (otherPeer) {
-                otherPeer.send("answer:" + message.answer);
+            else if (message.action === 'answer') {
+                const otherPeer = getOtherPeer(message.challengeId, socket);
+                if (otherPeer) {
+                    otherPeer.send("answer:" + message.answer);
+                }
             }
-        }
-        else if (message.action === 'icecandidate') {
-            const otherPeer = getOtherPeer(message.challengeId, socket);
-            if (otherPeer) {
-                otherPeer.send("icecandidate:" + message.icecandidate);
+            else if (message.action === 'icecandidate') {
+                const otherPeer = getOtherPeer(message.challengeId, socket);
+                if (otherPeer) {
+                    otherPeer.send("icecandidate:" + message.icecandidate);
+                }
             }
+        } catch (error) {
+            console.log("Websocket error", error)
+            console.log("Websocket error", data.toString())
         }
     })
 })

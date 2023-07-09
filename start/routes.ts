@@ -41,7 +41,7 @@ Route.group(() => {
 Route.group(() => {
   Route.group(() => {
     Route.get('', 'SigauthController.index')
-    Route.get('verify', 'SigauthController.verify')
+    Route.get('verify/:id', 'SigauthController.verify')
   }).prefix('sigauth')
 }).prefix('api/v2')
 

@@ -80,7 +80,7 @@
     "@element-plus/icons-vue": "^2.0.9",
     "@inertiajs/inertia": "^0.11.0",
     "@inertiajs/inertia-vue3": "^0.6.0",
-    "@noble/curves": "0.7.3",
+    "@noble/curves": "1.1.0",
     "@nostr-dev-kit/ndk": "^0.7.4",
     "@zerologin/elements": "^0.0.8-beta",
     "@zerologin/lnurl": "^0.1.2",
