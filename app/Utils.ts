@@ -1,25 +1,19 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Env from '@ioc:Adonis/Core/Env'
 
 class Utils {
   public publicIdCookieName = 'zerologin_public_id'
 
   public isExternal({ request }: HttpContextContract) {
-    return request.parsedUrl.path?.includes('api/v1')
+    return !request.parsedUrl.path?.includes('api/internal')
   }
 
-  public getHost({ request }: HttpContextContract, protocol: boolean = false) {
-    if (request.headers().origin) {
-      const host = request.headers().origin!
-      if (protocol) {
-        return host
-      }
-      return this.removeProtocol(host)
+  public getZerologinHost(includeProtocol: boolean = false) {
+    const host = this.removeProtocol(Env.get('APP_URL'))
+    if (includeProtocol) {
+      return this.getProtocol() + host
     }
-
-    if (protocol) {
-      return request.protocol() + '://' + request.host()
-    }
-    return request.host()!
+    return host
   }
 
   public removeProtocol(url: string) {
@@ -54,9 +48,14 @@ class Utils {
       }
     }
     else {
-      url = protocol + '://' + url
+      url = this.getProtocol(protocol) + url
     }
     return url
+  }
+
+  public getProtocol(protocol: Protocols = Protocols.http) {
+    let result = Env.get('SSL') ? protocol + 's' : protocol
+    return result + '://'
   }
 }
 

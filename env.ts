@@ -30,4 +30,5 @@ export default Env.rules({
   PG_PASSWORD: Env.schema.string.optional(),
   PG_DB_NAME: Env.schema.string(),
   JWT_SECRET: Env.schema.string(),
+  SSL: Env.schema.boolean(),
 })

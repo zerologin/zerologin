@@ -114,7 +114,7 @@ export default class SigauthController {
       }
 
       if (sigauthDomain.issueCookies) {
-        const hostDomain = Utils.getHost(ctx, true)
+        const hostDomain = Utils.getZerologinHost(true)
         ctx.response.append('set-cookie', JwtService.getCookie(jwt, hostDomain, sigauthDomain.tokenName))
       }
       if (redirect && sigauthDomain.transportRedirect && sigauthDomain.redirectUrl) {

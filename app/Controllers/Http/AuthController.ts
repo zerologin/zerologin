@@ -71,7 +71,7 @@ export default class AuthController {
 
     const { k1, key, publicId } = ctx.request.params()
 
-    let hostDomain = Utils.getHost(ctx, true)
+    let hostDomain = Utils.getZerologinHost(true)
 
     const result = { pubkey: '', jwt: '', refreshToken: '' }
 
@@ -134,7 +134,7 @@ export default class AuthController {
     }
     response.response.writeHead(200, headers)
 
-    const host = Utils.getHost(ctx, true)
+    const host = Utils.getZerologinHost(true)
     const rootDomain = Utils.getRootDomain(host)
 
     let domain = host
@@ -145,13 +145,13 @@ export default class AuthController {
     const { publicId } = ctx.request.qs()
     if (Utils.isExternal(ctx)) {
       const externalDomain = await Domain.query().where('public_id', publicId).firstOrFail()
-      domain = ctx.request.protocol() + '://' + externalDomain.zerologinUrl
+      domain = Utils.getProtocol() + externalDomain.zerologinUrl
       urlSuffix = '/api/v1'
       useKeyauth = externalDomain.isKeyauth
     }
 
     const lnurlChallenge = LnurlService.generateNewUrl(domain + urlSuffix, publicId, useKeyauth)
-
+    
     response.response.write(
       `data: ${JSON.stringify({ message: 'challenge', rootDomain, ...lnurlChallenge })}\n\n`
     )
@@ -180,7 +180,7 @@ export default class AuthController {
       return true
     }
     else {
-      const host = Utils.getHost(ctx, false)
+      const host = Utils.getZerologinHost(false)
       let hostDomain = Utils.getRootDomain(host)
       const domain = hostDomain.split(':')[0]
       ctx.response.append('set-cookie', JwtService.getCookie('', domain, 'jwt', 0))
