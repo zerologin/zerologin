@@ -143,7 +143,7 @@ export default class SigauthController {
       return ctx.response.unauthorized("You don't have the permission to access this page")
     }
 
-    const sigauthDomain = await SigauthDomain.query().where('public_id', publicIdCookie).first()
+    const sigauthDomain = await SigauthDomain.query().where('id', publicIdCookie).first()
     if (!sigauthDomain) {
       return ctx.response.unauthorized("Cannot find the domain configuration associated with this request")
     }
