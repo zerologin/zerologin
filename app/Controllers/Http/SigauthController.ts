@@ -37,7 +37,7 @@ export default class SigauthController {
       id: "",
       challenge,
       callback: appUrl + '/api/v2/sigauth/verify/' + sigauthDomain.id,
-      origin: Utils.getRootDomain(sigauthDomain.zerologinUrl),
+      origin: Utils.getFQDN(sigauthDomain.zerologinUrl),
       transports,
       signaling: Utils.switchProtocol(appUrl, Protocols.ws),
     }

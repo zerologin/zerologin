@@ -25,6 +25,19 @@ class Utils {
   }
 
   public getRootDomain(url: string) {
+    let domain: string = this.removeProtocol(url);
+
+    // Remove port
+    domain = domain.split(':')[0];
+
+    // Extract root domain
+    const parts = domain.split('.').reverse();
+    const rootDomain = parts[1] + '.' + parts[0];
+
+    return rootDomain;
+  }
+
+  public getFQDN(url: string) {
     //Regex doesn't work without protocol, so add a default one
     if (!url.includes('://')) {
       url = 'http://' + url

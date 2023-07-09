@@ -11,8 +11,8 @@ export default class DomainsController {
   public async store({ request, response }: HttpContextContract) {
     const { zerologinUrl, rootUrl, secret, issueCookies, tokenName, refreshTokenName, isKeyauth } = await request.validate(DomainValidator)
 
-    let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
-    let parsedRootUrl = Utils.getRootDomain(rootUrl)
+    let parsedZerologinUrl = Utils.getFQDN(zerologinUrl)
+    let parsedRootUrl = Utils.getFQDN(rootUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
     await request.user.related('domains').create({
@@ -41,8 +41,8 @@ export default class DomainsController {
     const { id } = request.params()
     const domain = await request.user.related('domains').query().where('id', id).firstOrFail()
 
-    let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
-    let parsedRootUrl = Utils.getRootDomain(rootUrl)
+    let parsedZerologinUrl = Utils.getFQDN(zerologinUrl)
+    let parsedRootUrl = Utils.getFQDN(rootUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
     domain.merge({

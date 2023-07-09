@@ -11,7 +11,7 @@ export default class SigauthDomainsController {
   public async store({ request, response }: HttpContextContract) {
     const { zerologinUrl, redirectUrl, secret, issueCookies, tokenName, transportPolling, transportRedirect, transportWebrtc } = await request.validate(SigauthDomainValidator)
 
-    let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
+    let parsedZerologinUrl = Utils.getFQDN(zerologinUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
     await request.user.related('sigauthDomains').create({
@@ -41,7 +41,7 @@ export default class SigauthDomainsController {
     const { id } = request.params()
     const domain = await request.user.related('sigauthDomains').query().where('id', id).firstOrFail()
 
-    let parsedZerologinUrl = Utils.getRootDomain(zerologinUrl)
+    let parsedZerologinUrl = Utils.getFQDN(zerologinUrl)
     const encryptedSecret = Encryption.encrypt(secret)
 
     domain.merge({

@@ -135,7 +135,7 @@ export default class AuthController {
     response.response.writeHead(200, headers)
 
     const host = Utils.getZerologinHost(true)
-    const rootDomain = Utils.getRootDomain(host)
+    const rootDomain = Utils.getFQDN(host)
 
     let domain = host
     let urlSuffix = '/api/internal'
@@ -181,7 +181,7 @@ export default class AuthController {
     }
     else {
       const host = Utils.getZerologinHost(false)
-      let hostDomain = Utils.getRootDomain(host)
+      let hostDomain = Utils.getFQDN(host)
       const domain = hostDomain.split(':')[0]
       ctx.response.append('set-cookie', JwtService.getCookie('', domain, 'jwt', 0))
       ctx.response.redirect('/')
