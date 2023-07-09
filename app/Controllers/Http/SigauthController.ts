@@ -5,8 +5,8 @@ import LnurlService from 'App/Services/LnurlService'
 import Utils, { Protocols } from 'App/Utils'
 import base64url from "base64url"
 import NDK from "@nostr-dev-kit/ndk";
-import Env from '@ioc:Adonis/Core/Env'
 import JwtService from 'App/Services/JwtService'
+import Encryption from '@ioc:Adonis/Core/Encryption'
 import crypto from 'crypto'
 
 const TRANSPORT_WEBRTC = 'webrtc'
@@ -88,6 +88,11 @@ export default class SigauthController {
     if (sigValid) {
       challenges.delete(decodedAuthRequest.id)
 
+      const decryptedJwtSecret: string | null = Encryption.decrypt(sigauthDomain.jwtSecret)
+      if (!decryptedJwtSecret) {
+        return ctx.response.unprocessableEntity()
+      }
+
       // Nostr DID
       if (decodedAuthRequest.nostr?.relays?.length > 0) {
         const ndk = new NDK({ explicitRelayUrls: decodedAuthRequest.nostr?.relays });
@@ -104,13 +109,13 @@ export default class SigauthController {
             ...user.profile,
           }
         },
-          Env.get('JWT_SECRET'))
+          decryptedJwtSecret)
       }
       else {
         jwt = await JwtService.generateToken({
           pubKey: decodedAuthRequest.publicKey
         },
-          Env.get('JWT_SECRET'))
+          decryptedJwtSecret)
       }
 
       if (sigauthDomain.issueCookies) {
