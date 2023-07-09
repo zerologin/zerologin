@@ -97,7 +97,7 @@ export default class AuthController {
       result.pubkey = key
       result.refreshToken = refreshToken.token
 
-      hostDomain = ctx.request.protocol() + '://' + domain.rootUrl
+      hostDomain = Utils.getProtocol() + domain.rootUrl
       if (domain.issueCookies) {
         // Refresh token
         ctx.response.append(
@@ -151,7 +151,7 @@ export default class AuthController {
     }
 
     const lnurlChallenge = LnurlService.generateNewUrl(domain + urlSuffix, publicId, useKeyauth)
-    
+
     response.response.write(
       `data: ${JSON.stringify({ message: 'challenge', rootDomain, ...lnurlChallenge })}\n\n`
     )
