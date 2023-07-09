@@ -5,7 +5,8 @@ class Utils {
   public publicIdCookieName = 'zerologin_public_id'
 
   public isExternal({ request }: HttpContextContract) {
-    return !request.parsedUrl.path?.includes('api/internal')
+    return request.parsedUrl.path?.includes('api/v1') ||
+      request.parsedUrl.path?.includes('api/v2')
   }
 
   public getZerologinHost(includeProtocol: boolean = false) {
