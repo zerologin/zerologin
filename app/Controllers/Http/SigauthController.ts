@@ -31,7 +31,7 @@ export default class SigauthController {
     const challenge = LnurlService.generateSecret()
 
 
-    let appUrl = ctx.request.protocol() + '://' + sigauthDomain.zerologinUrl
+    let appUrl = Utils.getProtocol() + sigauthDomain.zerologinUrl
 
     const authRequest = {
       id: "",
